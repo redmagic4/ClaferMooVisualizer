@@ -56,7 +56,7 @@ Input.method("onInitRendered", function()
     options.beforeSubmit = this.beginQuery.bind(this);
     options.success = this.showResponse.bind(this);
     options.error = this.handleError.bind(this);
-    options.timeout = 600000;
+    options.timeout = 600000;// &line timeout
 
     $('#myform').ajaxForm(options); 
 	$('#myform').submit();
@@ -104,6 +104,7 @@ Input.method("handleError", function(responseText, statusText, xhr, $form)  {
     
 });
 
+// &begin timeout
 Input.method("handleTimeout", function(responseText, statusText, xhr, $form)  { 
 //	clearTimeout(this.timeout);
 	var er = document.getElementById("error_overlay");
@@ -114,7 +115,7 @@ Input.method("handleTimeout", function(responseText, statusText, xhr, $form)  {
 	};
 	this.endQuery();     
 });
-
+// &end timeout
 Input.method("convertHtmlTags", function(input) {
   var in_tag=false;
   var in_var=false;

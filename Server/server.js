@@ -227,7 +227,7 @@ server.post('/upload', function(req, res, next) {
                 });
 
 				tool.on('exit', function (code) 
-				{
+				{	//&begin timeout
 //					if (timedout){
 //						res.writeHead(500, { "Content-Type": "text/html"});
 //						res.end("Request timed out")
@@ -235,6 +235,7 @@ server.post('/upload', function(req, res, next) {
 //						return;
 //					} 
 //					clearTimeout(countdown);
+					//&end timeout
 					var result = "";
 					console.log("Preparing to send result");
 					if(error_result.indexOf('Exception in thread "main"') > -1){

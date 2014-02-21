@@ -28,6 +28,6 @@ ClaferMooVisualizer : ClaferWebTool
 		icons
 	processManagement
         polling
-        timeouts
+        timeout
         errorHandling
         cancellation
