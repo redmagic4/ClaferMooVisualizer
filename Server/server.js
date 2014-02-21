@@ -79,7 +79,7 @@ server.post('/', function(req, res, next) {
  * Moreover, this helps to control the execution of ClaferMoo: to stop, or to get intermediate results.
  * An alternative way might be to create a web socket
  */
-
+// &begin polling
 server.post('/poll', function(req, res, next)
 {
     for (var i = 0; i < processes.length; i++)
@@ -117,6 +117,8 @@ server.post('/poll', function(req, res, next)
 /*
  * TODO: create a Cancel request
  */
+
+//&end polling
 
 /*
  * Handle file upload
@@ -211,15 +213,15 @@ server.post('/upload', function(req, res, next) {
 				console.log("processing file with integratedFMO");
 
                 var d = new Date();
-                var process = { windowKey: req.body.windowKey, tool: null, folder: dlDir, lastUsed: d, completed: false, code: 0};
+                var process = { windowKey: req.body.windowKey, tool: null, folder: dlDir, lastUsed: d, completed: false, code: 0};//&line polling
 
                 try
                 {
                     var util  = require('util');
                     var spawn = require('child_process').spawn;
                     var tool  = spawn(python, [tool_path + python_file_name, uploadedFilePath, "--preservenames"], { cwd: dlDir, env: process.env});
-                    process.tool = tool;
-                    processes.push(process);                    
+                    process.tool = tool;//&line polling
+                    processes.push(process);        //&line polling            
                 }                
                 catch(err)
                 {
@@ -267,9 +269,9 @@ server.post('/upload', function(req, res, next) {
                         console.log('Spawn error: unknown error');
                     }                
 
-                    process.result = "Error: Could not run ClaferMoo. Likely, Python or ClaferMoo have not been found. Please check whether Python is available from the command line, as well as whether ClaferMoo has been properly installed.";
-                    process.code = 9000;
-                    process.completed = true;
+                    process.result = "Error: Could not run ClaferMoo. Likely, Python or ClaferMoo have not been found. Please check whether Python is available from the command line, as well as whether ClaferMoo has been properly installed.";//&line polling
+                    process.code = 9000;//&line polling
+                    process.completed = true;//&line polling
                 });
 
 				tool.on('exit', function (code) 
@@ -300,9 +302,9 @@ server.post('/upload', function(req, res, next) {
 						console.log(data_result);
 					}
 					
-                    process.result = result;
-                    process.code = code;
-                    process.completed = true;
+                    process.result = result;//&line polling
+                    process.code = code;//&line polling
+                    process.completed = true;//&line polling
 		//			clearTimeout(serverTimeout);
 					cleanupOldFiles(uploadedFilePath, dlDir); 
                     // we clean old files here, since the result is stored in the result variable
