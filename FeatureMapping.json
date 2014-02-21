@@ -1,0 +1,6 @@
+[	
+	{
+		"Name": "instanceParser",
+		"files": ["Client/instanceParser.js"],		
+	}
+]

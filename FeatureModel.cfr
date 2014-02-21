@@ -32,3 +32,4 @@ ClaferMooVisualizer : ClaferWebTool
         timeout
         errorHandling
         cancellation
+	instanceParser
