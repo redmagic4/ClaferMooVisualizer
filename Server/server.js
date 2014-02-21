@@ -77,6 +77,7 @@ server.post('/', function(req, res, next) {
 /*
  * Handle file upload
  */
+// &begin fileUpload
 server.post('/upload', function(req, res, next) {
 	//check if client has either a file directly uploaded or a url location of a file
    	if (req.files.claferFile === undefined){
@@ -143,6 +144,7 @@ server.post('/upload', function(req, res, next) {
 		    //serverTimeout = setTimeout(function(){
 		    //	res.send ("Serverside Timeout.");
 		    //}, 60000);
+			//&begin fileProcessing
 			fs.readFile(uploadedFilePath, function (err, data) {
 
 				if(data)
@@ -175,12 +177,14 @@ server.post('/upload', function(req, res, next) {
                 
                 var error_result = "";
 				var data_result = "";
+				//&begin timeout
 				var timedout = false;
 				var countdown = setTimeout(function(){
 					console.log("request timed out");
 					tool.kill();
 					timedout = true;
 				}, timeout);
+				//&end timeout
 				tool.stdout.on('data', function (data) 
 				{	
 				  data_result += data;
@@ -246,10 +250,13 @@ server.post('/upload', function(req, res, next) {
 				});
 				
 			});
+			// &end fileProcessing
 		});
 	});
 });
 
+// &end fileUpload
+// &begin cleanOldFiles
 function finishCleanup(dir, results){
 	if (fs.existsSync(dir)){
 		fs.rmdir(dir, function (err) {
@@ -289,7 +296,7 @@ function deleteOld(path){
 		});
 	}
 }
-
+// &end cleanOldFiles
 function escapeHtml(unsafe) {
   return unsafe
       .replace(/&/g, "&amp;")

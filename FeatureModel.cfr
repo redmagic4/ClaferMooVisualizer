@@ -3,7 +3,10 @@ ClaferMooVisualizer : ClaferWebTool
         or backends
             ClaferMoo
             ChocoSingle
-        cache   
+        cache
+		fileUpload
+			fileProcessing
+		cleanOldFiles
     client
         jquery
             windowsEngine
