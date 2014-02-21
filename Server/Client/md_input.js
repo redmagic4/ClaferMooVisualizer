@@ -29,9 +29,9 @@ function Input(host)
     this.posx = 0;
     this.posy = 0;
     
-    this.requestTimeout = 60000;
-    this.pollingDelay = 3000;    
-    this.pollingTimeoutObject = null;
+    this.requestTimeout = 60000;//&line timeout
+    this.pollingDelay = 3000;    //&line polling
+    this.pollingTimeoutObject = null;//&line [polling, timeout]
     
     this.host = host;
     this.serverAction = "/upload";
@@ -57,7 +57,7 @@ Input.method("onInitRendered", function()
  
     var options = new Object();
     options.beforeSubmit = this.beginQuery.bind(this);
-    options.success = this.fileSent.bind(this);
+    options.success = this.fileSent.bind(this);//&line polling
     options.error = this.handleError.bind(this);
     options.timeout = this.requestTimeout;// &line timeout
 
@@ -91,6 +91,7 @@ Input.method("showRequest", function(formData, jqForm, options) {
 });
 */
 
+//&begin polling
 Input.method("onPoll", function(response)
 {
     if (response !== "Working")
@@ -122,6 +123,7 @@ Input.method("fileSent", function(responseText, statusText, xhr, $form)  {
     else
         this.endQuery();
 });
+//&end polling
 
 // post-submit callback 
 //Input.method("requestComplete", function(responseText, statusText, xhr, $form)  { 

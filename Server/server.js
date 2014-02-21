@@ -206,15 +206,15 @@ server.post('/upload', function(req, res, next) {
 					cleanupOldFiles(uploadedFilePath, dlDir);
 					return;
 		    	}
-
-                var d = new Date();
-                var process = { windowKey: req.body.windowKey, tool: null, folder: dlDir, lastUsed: d, completed: false, code: 0};
+				
+                var d = new Date();//&line polling
+                var process = { windowKey: req.body.windowKey, tool: null, folder: dlDir, lastUsed: d, completed: false, code: 0};//&line polling
 
 				if (uploadedFilePath.substring(uploadedFilePath.length - 5) == ".data")
                 {
-                    process.result = file_contents;
-                    process.code = 0;
-                    process.completed = true;
+                    process.result = file_contents;//&line polling
+                    process.code = 0;//&line polling
+                    process.completed = true;//&line polling
 					cleanupOldFiles(uploadedFilePath, dlDir);
 					return;
 				}
