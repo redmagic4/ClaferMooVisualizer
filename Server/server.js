@@ -36,7 +36,7 @@ var port = config.port;
 
 var server = express();
 
-var timeout = 40000;//config.timeout; &line timeout
+var timeout = config.timeout;//&line timeout
 
 //support for sessions - used for url uploads
 server.use(express.cookieParser('asasdhf89adfhj0dfjask'));
