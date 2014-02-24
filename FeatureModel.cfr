@@ -5,6 +5,7 @@ ClaferMooVisualizer : ClaferWebTool
             ChocoSingle
         cache
 		fileUpload
+			handleEmptyFile
 			fileProcessing
 		cleanOldFiles
 		checkingDependencies

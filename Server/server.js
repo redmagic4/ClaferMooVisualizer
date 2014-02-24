@@ -180,6 +180,7 @@ server.post('/upload', function(req, res, next) {
             res.end("no clafer file submitted");
             return;
         }
+        //&begin handleEmptyFile
         var pre_content = fs.readFileSync(uploadedFilePath);
         if (pre_content.length == 0)
         {
@@ -187,7 +188,7 @@ server.post('/upload', function(req, res, next) {
             res.writeHead(200, { "Content-Type": "text/html"});
             res.end("no clafer file submitted");
             return;
-        }        
+        }//&end handleEmptyFile
 	}
 
 //make temp folder for files and move file there
