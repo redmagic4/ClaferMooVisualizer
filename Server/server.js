@@ -255,6 +255,7 @@ server.post('/upload', function(req, res, next) {
                     killProcessTree(process);
 				}, timeout);
                 //&end timeout
+				//&begin errorHandling
                 var error_result = "";
 				var data_result = "";
 
@@ -294,7 +295,7 @@ server.post('/upload', function(req, res, next) {
                     if (process.timeoutObject)//&line timeout
                         clearTimeout(process.timeoutObject);//&line timeout
                 });
-
+                //&end errorHandling
 				tool.on('exit', function (code) 
 				{
 					var result = "";
