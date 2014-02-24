@@ -6,5 +6,9 @@
 	{
 		"Name": "console",
 		"files": ["Server/Client/md_console.js"]
+	},
+	{
+		"Name": "help_pages",
+		"files": ["Server/Client/help_pages/*.*"]
 	}
 ]
