@@ -24,9 +24,9 @@ function Input(host)
     this.id = "mdInput";
     this.title = "Input";
 
-    this.requestTimeout = 60000; // what is the timeout for response after sending a file
-    this.pollingTimeout = 60000;  // what is the timeout when polling
-    this.pollingDelay = 2000;    // how often to send requests (poll) for updates
+    this.requestTimeout = 60000; // what is the timeout for response after sending a file, &line timeout
+    this.pollingTimeout = 60000;  // what is the timeout when polling, &line [polling, timeout]
+    this.pollingDelay = 2000;    // how often to send requests (poll) for updates, &line polling
 
 
     this.width = 500;
@@ -130,7 +130,7 @@ Input.method("poll", function()
     var options = new Object();
     options.url = "/poll";
     options.type = "post";
-    options.timeout = this.pollingTimeout;
+    options.timeout = this.pollingTimeout;//&line timeout
     if (!this.toCancel)
         options.data = {windowKey: this.host.key, command: "ping"};
     else
@@ -157,8 +157,8 @@ Input.method("handleError", function(response, statusText, xhr)  {
 	er.style.visibility = "visible";	
     var caption;
     
-    if (statusText == "timeout")
-        caption = "Request Timeout. <br> Please check whether the server is available.";
+    if (statusText == "timeout")//&line timeout
+        caption = "Request Timeout. <br> Please check whether the server is available.";//&line timeout
     else if (statusText == "error" && response.responseText == "")
         caption = "Request Error. <br> Please check whether the server is available.";        
     else
