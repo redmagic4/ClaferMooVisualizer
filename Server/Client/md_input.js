@@ -150,7 +150,7 @@ Input.method("fileSent", function(responseText, statusText, xhr, $form)  {
         this.endQuery();
 });
 //&end polling
-
+//&begin errorHandling
 Input.method("handleError", function(response, statusText, xhr)  { 
 	clearTimeout(this.pollingTimeoutObject);
 	var er = document.getElementById("error_overlay");
@@ -177,7 +177,7 @@ Input.method("handleError", function(response, statusText, xhr)  {
 	this.endQuery();
     
 });
-
+//&end errorHandling
 Input.method("convertHtmlTags", function(input) {
   var in_tag=false;
   var in_var=false;
@@ -251,33 +251,35 @@ Input.method("inputChange", function(){
 });
 
 Input.method("processToolResult", function(result)
-{
+{//&begin errorHandling
 	if (!result)
     {
         this.handleError(null, "empty_argument", null);
         return;
     }
-        
+        //&end errorHandling
 	var ar = [];
 
 	if (this.optimizeFlag){
 		ar = result.split("=====");
 		this.optimizeFlag = 0;
     	this.addInstancesFlag = 0;
+    	//&begin errorHandling
     	if (ar.length != 3)
 		{
             this.handleError(null, "malformed_output", null);
        		return;
-   		}
+   		}//&end errorHandling
     } else if (this.addInstancesFlag) {
 		ar = this.previousData.Unparsed;
 		this.optimizeFlag = 0;
     	this.addInstancesFlag = 0;
+    	//&begin errorHandling
 		if (ar == null || ar.length != 3)
 		{
             this.handleError(null, "malformed_output", null);
        		return;
-   		}
+   		}//&end errorHandling
 
 		var parser = new InstanceConverter(result)
 		ar[1] += parser.convertFromClaferIGOutputToClaferMoo(this.previousData.abstractXML);
@@ -287,12 +289,12 @@ Input.method("processToolResult", function(result)
 	var abstractXMLText = ar[2];
 
 	instancesXMLText = instancesXMLText.replaceAll('<?xml version="1.0"?>', '');
-
+	//&begin errorHandling
     if (instancesXMLText.length == 0 || instancesXMLText == "<instances></instances>")
     {
         this.handleError(null, "empty_instances", null);
         return;
-    }
+    }//&end errorHandling
     
 	abstractXMLText = abstractXMLText.replaceAll("&quot;", "\"");
 	abstractXMLText = abstractXMLText.replaceAll("&gt;", ">");
