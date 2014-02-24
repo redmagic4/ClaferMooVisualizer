@@ -36,7 +36,7 @@ var port = config.port;
 
 var server = express();
 
-var timeout = 40000;//config.timeout;
+var timeout = 40000;//config.timeout; &line timeout
 
 //support for sessions - used for url uploads
 server.use(express.cookieParser('asasdhf89adfhj0dfjask'));
@@ -246,7 +246,7 @@ server.post('/upload', function(req, res, next) {
                     console.log("Error while creating a process: " + err);
                     // TODO: handle this error properly
                 }
-
+                //&begin timeout
 				process.timeoutObject = setTimeout(function(){
 					console.log("Request timed out.");
                     process.result = "Error: Serverside Timeout";
@@ -254,7 +254,7 @@ server.post('/upload', function(req, res, next) {
                     process.completed = true;
                     killProcessTree(process);
 				}, timeout);
-                
+                //&end timeout
                 var error_result = "";
 				var data_result = "";
 
@@ -291,8 +291,8 @@ server.post('/upload', function(req, res, next) {
                     process.result = "Error: Could not run ClaferMoo. Likely, Python or ClaferMoo have not been found. Please check whether Python is available from the command line, as well as whether ClaferMoo has been properly installed.";//&line polling
                     process.code = 9000;//&line polling
                     process.completed = true;//&line polling
-                    if (process.timeoutObject)
-                        clearTimeout(process.timeoutObject);
+                    if (process.timeoutObject)//&line timeout
+                        clearTimeout(process.timeoutObject);//&line timeout
                 });
 
 				tool.on('exit', function (code) 
@@ -304,8 +304,8 @@ server.post('/upload', function(req, res, next) {
                         console.log("Finished cancellation");
                         code = 9001; // just a non-zero value 
                         cleanupOldFiles(uploadedFilePath, dlDir); 
-                        if (process.timeoutObject)
-                            clearTimeout(process.timeoutObject);
+                        if (process.timeoutObject)//&line timeout
+                            clearTimeout(process.timeoutObject);//&line timeout
 
                         return;
                     }
@@ -332,8 +332,8 @@ server.post('/upload', function(req, res, next) {
                     process.code = code;//&line polling
                     process.completed = true;//&line polling
                     
-                    if (process.timeoutObject)
-                        clearTimeout(process.timeoutObject);
+                    if (process.timeoutObject)//&line timeout
+                        clearTimeout(process.timeoutObject);//&line timeout
                         
                     cleanupOldFiles(uploadedFilePath, dlDir); 
                     // we clean old files here, since the result is stored in the result variable
@@ -407,7 +407,7 @@ function changeFileExt(name, ext, newExt)
 
 	return name;
 }
-
+//&begin timeout
 function killProcessTree(process)
 {
     var spawn = require('child_process').spawn;
@@ -431,7 +431,7 @@ function killProcessTree(process)
     }
                 
 }
-
+//&end timeout
 
 /*
  * Catch all. error reporting for unknown routes
