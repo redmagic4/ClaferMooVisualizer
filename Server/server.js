@@ -36,7 +36,7 @@ var port = config.port;
 
 var server = express();
 
-var timeout = config.timeout;
+var timeout = 40000;//config.timeout;
 
 //support for sessions - used for url uploads
 server.use(express.cookieParser('asasdhf89adfhj0dfjask'));
@@ -113,24 +113,8 @@ server.post('/poll', function(req, res, next)
             }//&begin cancellation
             else // if it is cancel
             {
-                var spawn = require('child_process').spawn;
-                console.log("Killing the process tree with Parent PID = " + processes[i].tool.pid);
-                
-                processes[i].killed = true;
-                
-                // first, try a Windows command
-                var killer_win  = spawn("taskkill", ["/F", "/T", "/PID", processes[i].tool.pid]);
-                
-				killer_win.on('error', function (err){	// if error occurs, then we are on Linux
-                    var killer_linux = spawn("pkill", ["-TERM", "-P", processes[i].tool.pid]);                   
-
-                    killer_linux.on('error', function(err){
-                        console.log("Cannot terminate processes.");
-                    });
-				});                
-                
+                killProcessTree(processes[i]);
                 processes.splice(i, 1);
-                
                 res.writeHead(200, { "Content-Type": "text/html"});
                 res.end("Cancelled");
                 return;                
@@ -138,7 +122,7 @@ server.post('/poll', function(req, res, next)
         }
     }
     
-    res.writeHead(400, { "Content-Type": "text/html"});
+    res.writeHead(404, { "Content-Type": "text/html"});
     res.end("Error: the requested process is not found.")    
 });
 
@@ -217,10 +201,9 @@ server.post('/upload', function(req, res, next) {
 			if (err) throw err;
 			var file_contents;
 			console.log("proceeding with " + uploadedFilePath);
+            
 		    // read the contents of the uploaded file
-		    //serverTimeout = setTimeout(function(){
-		    //	res.send ("Serverside Timeout.");
-		    //}, 60000);
+			
 			//&begin fileProcessing
 			fs.readFile(uploadedFilePath, function (err, data) {
 
@@ -242,8 +225,11 @@ server.post('/upload', function(req, res, next) {
                     process.result = file_contents;//&line polling
                     process.code = 0;//&line polling
                     process.completed = true;//&line polling
+                    processes.push(process);                    
 					cleanupOldFiles(uploadedFilePath, dlDir);
-					return;
+                    res.writeHead(200, { "Content-Type": "text/html"});
+                    res.end("OK"); // just means the file has been sent sucessfully and started to processing
+                    return;
 				}
 				console.log("processing file with integratedFMO");
 
@@ -260,17 +246,18 @@ server.post('/upload', function(req, res, next) {
                     console.log("Error while creating a process: " + err);
                     // TODO: handle this error properly
                 }
+
+				process.timeoutObject = setTimeout(function(){
+					console.log("Request timed out.");
+                    process.result = "Error: Serverside Timeout";
+                    process.code = 9003;
+                    process.completed = true;
+                    killProcessTree(process);
+				}, timeout);
                 
                 var error_result = "";
 				var data_result = "";
-				//&begin timeout
-				var timedout = false;
-//				var countdown = setTimeout(function(){
-//						console.log("request timed out");
-//						tool.kill();
-//						timedout = true;
-//				}, timeout);
-				//&end timeout
+
 				tool.stdout.on('data', function (data){	
                     data_result += data;
 				});
@@ -304,18 +291,12 @@ server.post('/upload', function(req, res, next) {
                     process.result = "Error: Could not run ClaferMoo. Likely, Python or ClaferMoo have not been found. Please check whether Python is available from the command line, as well as whether ClaferMoo has been properly installed.";//&line polling
                     process.code = 9000;//&line polling
                     process.completed = true;//&line polling
+                    if (process.timeoutObject)
+                        clearTimeout(process.timeoutObject);
                 });
 
 				tool.on('exit', function (code) 
-				{	//&begin timeout
-//					if (timedout){
-//						res.writeHead(500, { "Content-Type": "text/html"});
-//						res.end("Request timed out")
-//						cleanupOldFiles(uploadedFilePath, dlDir);
-//						return;
-//					} 
-//					clearTimeout(countdown);
-					//&end timeout
+				{
 					var result = "";
                     //&begin cancellation
                     if (process.killed) // has been terminated
@@ -323,6 +304,9 @@ server.post('/upload', function(req, res, next) {
                         console.log("Finished cancellation");
                         code = 9001; // just a non-zero value 
                         cleanupOldFiles(uploadedFilePath, dlDir); 
+                        if (process.timeoutObject)
+                            clearTimeout(process.timeoutObject);
+
                         return;
                     }
 
@@ -334,7 +318,7 @@ server.post('/upload', function(req, res, next) {
 					if (code === 0) 
 					{				
 						result = "Return code = " + code + "\n" + data_result + "=====";
-						var xml = fs.readFileSync(changeFileExt(uploadedFilePath, '.cfr', '_desugared.xml'));
+						var xml = fs.readFileSync(changeFileExt(uploadedFilePath, '.cfr', '.xml'));
 						result += xml.toString();
 						result = escapeHtml(result);
 					}
@@ -342,16 +326,19 @@ server.post('/upload', function(req, res, next) {
 					{
 						result = 'Error, return code: ' + code + '\n' + error_result;
 						console.log(data_result);
-					}
-					
+					}					
+
                     process.result = result;//&line polling
                     process.code = code;//&line polling
                     process.completed = true;//&line polling
-		//			clearTimeout(serverTimeout);
-					cleanupOldFiles(uploadedFilePath, dlDir); 
+                    
+                    if (process.timeoutObject)
+                        clearTimeout(process.timeoutObject);
+                        
+                    cleanupOldFiles(uploadedFilePath, dlDir); 
                     // we clean old files here, since the result is stored in the result variable
 				});
-                
+
                 res.writeHead(200, { "Content-Type": "text/html"});
                 res.end("OK"); // just means the file has been sent sucessfully and started to processing
 				
@@ -420,6 +407,31 @@ function changeFileExt(name, ext, newExt)
 
 	return name;
 }
+
+function killProcessTree(process)
+{
+    var spawn = require('child_process').spawn;
+    console.log("Killing the process tree with Parent PID = " + process.tool.pid);
+    
+    process.killed = true;
+    
+    if (process.tool)
+    {
+    
+        // first, try a Windows command
+        var killer_win  = spawn("taskkill", ["/F", "/T", "/PID", process.tool.pid]);
+        
+        killer_win.on('error', function (err){	// if error occurs, then we are on Linux
+            var killer_linux = spawn("pkill", ["-TERM", "-P", process.tool.pid]);                   
+
+            killer_linux.on('error', function(err){
+                console.log("Cannot terminate processes.");
+            });
+        });                
+    }
+                
+}
+
 
 /*
  * Catch all. error reporting for unknown routes
