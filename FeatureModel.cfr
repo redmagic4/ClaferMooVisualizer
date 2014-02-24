@@ -38,3 +38,4 @@ ClaferMooVisualizer : ClaferWebTool
         errorHandling
         cancellation
 	instanceParser
+	selectionOfExamples

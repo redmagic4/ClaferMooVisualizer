@@ -55,27 +55,27 @@ Input.method("onInitRendered", function()
     this.previousData = "";
     this.toCancel = false;//&line cancellation
 
-    $("#submitFile").click(this.submitFileCall.bind(this));
-    $("#submitExample").click(this.submitExampleCall.bind(this));
+    $("#submitFile").click(this.submitFileCall.bind(this));//&line selectionOfExamples
+    $("#submitExample").click(this.submitExampleCall.bind(this));//&line selectionOfExamples
     
-    $("#exampleURL").attr("disabled", "disabled");
-    $("#submitExample").attr("disabled", "disabled");
+    $("#exampleURL").attr("disabled", "disabled");//&line selectionOfExamples
+    $("#submitExample").attr("disabled", "disabled");//&line selectionOfExamples
     
-    $("#switch_example").change(this.switchToExample.bind(this));
-    $("#switch_file").change(this.switchToFile.bind(this));
+    $("#switch_example").change(this.switchToExample.bind(this));//&line selectionOfExamples
+    $("#switch_file").change(this.switchToFile.bind(this));//&line selectionOfExamples
     
     $("#myform [type='file']").change(this.inputChange.bind(this));
     
     var options = new Object();
     options.beforeSubmit = this.beginQuery.bind(this);
     options.success = this.fileSent.bind(this);//&line polling
-    options.error = this.handleError.bind(this);
+    options.error = this.handleError.bind(this);//&line errorHandling
     options.timeout = this.requestTimeout;// &line timeout
 
     $('#myform').ajaxForm(options); 
 	$('#myform').submit();
 });
-
+//&begin selectionOfExamples
 Input.method("switchToExample", function(){
     $("#exampleURL").removeAttr("disabled");
     $("#submitExample").removeAttr("disabled");
@@ -91,7 +91,7 @@ Input.method("switchToFile", function(){
     $("#claferFile").removeAttr("disabled");
     $("#submitFile").removeAttr("disabled");    
 });
-
+//&end selectionOfExamples
 /*
  * Cancel request
  */
@@ -250,7 +250,7 @@ Input.method("convertHtmlTags", function(input) {
 
   return output;
 });
-
+//&begin selectionOfExamples
 Input.method("submitFileCall", function(){
     if (this.dataFileChosen)
     {
@@ -272,7 +272,7 @@ Input.method("submitExampleCall", function(){
     this.previousData = "";
     host.findModule("mdComparisonTable").permaHidden = {};
 });
-
+//&end selectionOfExamples
 Input.method("inputChange", function(){
 	var filename = $("#myform [type='file']").val();
 	if (filename.substring(filename.length-4) == ".cfr"){
@@ -371,7 +371,7 @@ Input.method("processToolResult", function(result)
     this.previousData = { Unparsed: ar, abstractXML: data.claferXML };
     this.host.updateData(data);
 });//&end instanceProcessing
-
+//&begin selectionOfExamples
 Input.method("getInitContent", function()
 {
     result = '<div id = "load_area">';
@@ -403,4 +403,4 @@ Input.method("getInitContent", function()
     return result;
 // id="addInstances"    
   
-});
+});//&end selectionOfExamples
