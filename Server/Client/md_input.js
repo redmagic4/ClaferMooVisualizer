@@ -58,13 +58,11 @@ Input.method("onInitRendered", function()
     $("#submitFile").click(this.submitFileCall.bind(this));//&line selectionOfExamples
     $("#submitExample").click(this.submitExampleCall.bind(this));//&line selectionOfExamples
     
-    $("#exampleURL").attr("disabled", "disabled");//&line selectionOfExamples
     $("#submitExample").attr("disabled", "disabled");//&line selectionOfExamples
-    
-    $("#switch_example").change(this.switchToExample.bind(this));//&line selectionOfExamples
-    $("#switch_file").change(this.switchToFile.bind(this));//&line selectionOfExamples
+    $("#submitFile").attr("disabled", "disabled");//&line selectionOfExamples
     
     $("#myform [type='file']").change(this.inputChange.bind(this));
+    $("#exampleURL").change(this.exampleChange.bind(this));
     
     var options = new Object();
     options.beforeSubmit = this.beginQuery.bind(this);
@@ -75,23 +73,6 @@ Input.method("onInitRendered", function()
     $('#myform').ajaxForm(options); 
 	$('#myform').submit();
 });
-//&begin selectionOfExamples
-Input.method("switchToExample", function(){
-    $("#exampleURL").removeAttr("disabled");
-    $("#submitExample").removeAttr("disabled");
-    
-    $("#claferFile").attr("disabled", "disabled");
-    $("#submitFile").attr("disabled", "disabled");    
-});
-
-Input.method("switchToFile", function(){
-    $("#exampleURL").attr("disabled", "disabled");
-    $("#submitExample").attr("disabled", "disabled");
-    
-    $("#claferFile").removeAttr("disabled");
-    $("#submitFile").removeAttr("disabled");    
-});
-//&end selectionOfExamples
 /*
  * Cancel request
  */
@@ -252,6 +233,8 @@ Input.method("convertHtmlTags", function(input) {
 });
 //&begin selectionOfExamples
 Input.method("submitFileCall", function(){
+
+    $("#exampleURL").val(null);
     if (this.dataFileChosen)
     {
        	this.optimizeFlag = 0;
@@ -270,23 +253,46 @@ Input.method("submitExampleCall", function(){
     this.optimizeFlag = 1;
     this.addInstancesFlag = 0;
     this.previousData = "";
+    
+    $("#myform [type='file']").val(null);
+    
     host.findModule("mdComparisonTable").permaHidden = {};
 });
 //&end selectionOfExamples
+Input.method("exampleChange", function(){
+    if ($("#exampleURL").val())
+    {
+        $("#submitExample").removeAttr("disabled");
+    }
+    else
+    {
+ 		$("#submitExample").attr("disabled", "disabled");       
+    }
+});
+
 Input.method("inputChange", function(){
 	var filename = $("#myform [type='file']").val();
-	if (filename.substring(filename.length-4) == ".cfr"){
-		$("#submitFile").val("Optimize");
- 		$("#submitFile").removeAttr("disabled");                      
-        this.dataFileChosen = false;
-    } else if (filename.substring(filename.length-5) == ".data"){
-		$("#submitFile").val("Add Instances");
- 		$("#submitFile").removeAttr("disabled");             
-        this.dataFileChosen = true;
-	}
-    else{ // unknown file
-		$("#submitFile").val("Unknown File");
- 		$("#submitFile").attr("disabled", "disabled");       
+    
+    if (filename)
+    {
+        if (filename.substring(filename.length-4) == ".cfr"){
+            $("#submitFile").val("Optimize");
+            $("#submitFile").removeAttr("disabled");                      
+            this.dataFileChosen = false;
+        } else if (filename.substring(filename.length-5) == ".data"){
+            $("#submitFile").val("Add Instances");
+            $("#submitFile").removeAttr("disabled");             
+            this.dataFileChosen = true;
+        }
+        else{ // unknown file
+            $("#submitFile").val("Unknown File");
+            $("#submitFile").attr("disabled", "disabled");       
+            this.dataFileChosen = false;
+        }
+    }
+    else{ // no file
+        $("#submitFile").val("Optimize");
+        $("#submitFile").attr("disabled", "disabled");       
         this.dataFileChosen = false;
     }
     
@@ -376,15 +382,13 @@ Input.method("getInitContent", function()
 {
     result = '<div id = "load_area">';
     result += '<form id="myform" action="' + this.serverAction + '" method="post" enctype="multipart/form-data" style="display: block;">';
-    result += '<input type="radio" checked="checked" name="switch" id="switch_file" value="inputFile">';
-    result += '<input type="file" size="25" name="claferFile" id="claferFile" style="width: 365px;">';
+    result += '<input type="file" size="25" name="claferFile" id="claferFile" style="width: 388px;">';
     result += '<input type="hidden" name="claferFileURL" value="' + window.location + '">';
     result += '<input id="submitFile" type="submit" value="Optimize">';
 
     result += '<input type="hidden" id="windowKey" name="windowKey" value="' + this.host.key + '">';
     result += '<br>';
-    result += '<input type="radio" name="switch" id="switch_example" value="inputExample">';
-    result += '<select id="exampleURL" name="exampleURL" style="width: 365px;">';
+    result += '<select id="exampleURL" name="exampleURL" style="width: 388px;">';
     
     for (var i = 0; i < this.host.examples.length; i++)
     {
