@@ -251,7 +251,7 @@ Input.method("inputChange", function(){
 		$("#addInstances").removeAttr("disabled")
 	}
 });
-
+//&begin instanceProcessing
 Input.method("processToolResult", function(result)
 {//&begin errorHandling
 	if (!result)
@@ -297,12 +297,12 @@ Input.method("processToolResult", function(result)
         this.handleError(null, "empty_instances", null);
         return;
     }//&end errorHandling
-
+    //&begin errorHandling
     if (instancesXMLText.indexOf("<instance></instance>") >= 0)
 	{
         this.handleError(null, "malformed_instance", null);
         return;
-    }
+    }//&end errorHandling
    
 	abstractXMLText = abstractXMLText.replaceAll("&quot;", "\"");
 	abstractXMLText = abstractXMLText.replaceAll("&gt;", ">");
@@ -331,7 +331,7 @@ Input.method("processToolResult", function(result)
     console.log(data);
     this.previousData = { Unparsed: ar, abstractXML: data.claferXML };
     this.host.updateData(data);
-});
+});//&end instanceProcessing
 Input.method("getInitContent", function()
 {
 	return '<div id="load_area"><form id="myform" action="' + this.serverAction + '" method="post" enctype="multipart/form-data">' + '<input type="file" size="15" name="claferFile">' + '<input type="hidden" name="claferFileURL" value="' + window.location + '">' + '<input id="optimize" type="submit" value="Optimize">'+
