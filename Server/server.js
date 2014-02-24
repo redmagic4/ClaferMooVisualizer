@@ -440,7 +440,7 @@ function killProcessTree(process)
 server.use(function(req, res, next){
   res.send(404, "Sorry can't find that!");
 });
-
+//&begin checkingDependencies
 var dependency_count = 4; // the number of tools to be checked before the Visualizer starts
 console.log('======================================');
 console.log('| ClaferMoo Visualizer (v.0.3.4)     |');
@@ -527,3 +527,4 @@ function dependency_ok()
         console.log('Ready. Listening on port ' + port);        
     }
 }
+//&end checkingDependencies
