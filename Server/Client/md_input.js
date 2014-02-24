@@ -258,7 +258,6 @@ Input.method("submitExampleCall", function(){
     
     host.findModule("mdComparisonTable").permaHidden = {};
 });
-//&end selectionOfExamples
 Input.method("exampleChange", function(){
     if ($("#exampleURL").val())
     {
@@ -269,7 +268,7 @@ Input.method("exampleChange", function(){
  		$("#submitExample").attr("disabled", "disabled");       
     }
 });
-
+//&end selectionOfExamples
 Input.method("inputChange", function(){
 	var filename = $("#myform [type='file']").val();
     

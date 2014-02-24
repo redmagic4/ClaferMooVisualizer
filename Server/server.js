@@ -164,10 +164,11 @@ server.post('/upload', function(req, res, next) {
 
 	//check if client has either a file directly uploaded or a url location of a file
    	if (req.files.claferFile === undefined){
+   	//&begin selectionOfExamples
             if (req.body.exampleURL !== undefined && req.body.exampleURL !== "") // if example submitted
             {
                 var uploadedFilePath = downloadFile(req.body.exampleURL, req.sessionID);                
-            }
+            }//&end selectionOfExamples
             else
             {
                 for (var x=0; x <= URLs.length; x++){

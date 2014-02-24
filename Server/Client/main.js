@@ -187,7 +187,7 @@ Host.method("getHelp", function(moduleName){
 Host.method("getHelpButton", function(moduleName){
     return this.helpGetter.getHelpButton(moduleName);
 });
-
+//&begin selectionOfExamples
 Host.method("getExamples", function()
 {
     var result = new Array();
@@ -200,3 +200,4 @@ Host.method("getExamples", function()
     
     return result;
 });
+//&end selectionOfExamples
