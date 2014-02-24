@@ -144,13 +144,13 @@ Input.method("poll", function()
     
     $.ajax(options);
 });
-
+//&begin claferModel
 Input.method("setClaferModelHTML", function(html){
     this.host.findModule("mdClaferModel").model = html;
     var iframe = $("#model")[0];
     iframe.src = iframe.src; // reloads the window
 });
-
+//&end claferModel
 Input.method("fileSent", function(responseText, statusText, xhr, $form)  { 
     this.toCancel = false;
 
@@ -165,7 +165,7 @@ Input.method("fileSent", function(responseText, statusText, xhr, $form)  {
     {
         if (responseText != "OK")
         {
-            this.setClaferModelHTML(responseText);
+            this.setClaferModelHTML(responseText);//&line claferModel
         }
         this.pollingTimeoutObject = setTimeout(this.poll.bind(this), this.pollingDelay);
     }

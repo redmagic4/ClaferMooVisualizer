@@ -25,7 +25,7 @@ ClaferMooVisualizer : ClaferWebTool
                     byQuality
                 filtering 
             objectives
-            claferSourceView
+            claferModel
             input
 				windowKey
 				instanceProcessing
