@@ -26,6 +26,7 @@ ClaferMooVisualizer : ClaferWebTool
             claferSourceView
             input
 				windowKey
+			console
 		icons
 	processManagement
         polling

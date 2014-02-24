@@ -1,6 +1,10 @@
 [	
 	{
 		"Name": "instanceParser",
-		"files": ["Server/Client/instance_parser.js"],		
+		"files": ["Server/Client/instance_parser.js"]	
+	},
+	{
+		"Name": "console",
+		"files": ["Server/Client/md_console.js"]
 	}
 ]
