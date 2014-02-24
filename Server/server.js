@@ -110,7 +110,7 @@ server.post('/poll', function(req, res, next)
                     res.end("Working");
                     return;
                 }
-            }
+            }//&begin cancellation
             else // if it is cancel
             {
                 var spawn = require('child_process').spawn;
@@ -134,7 +134,7 @@ server.post('/poll', function(req, res, next)
                 res.writeHead(200, { "Content-Type": "text/html"});
                 res.end("Cancelled");
                 return;                
-            }
+            }//&end cancellation
         }
     }
     
@@ -317,7 +317,7 @@ server.post('/upload', function(req, res, next) {
 //					clearTimeout(countdown);
 					//&end timeout
 					var result = "";
-                    
+                    //&begin cancellation
                     if (process.killed) // has been terminated
                     {
                         console.log("Finished cancellation");
@@ -327,7 +327,7 @@ server.post('/upload', function(req, res, next) {
                     }
 
                     console.log("Preparing to send result");
-                    
+                    //&end cancellation
 					if(error_result.indexOf('Exception in thread "main"') > -1){
 						code = 1;
 					}

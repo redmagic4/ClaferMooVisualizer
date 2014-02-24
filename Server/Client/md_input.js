@@ -32,7 +32,7 @@ function Input(host)
     this.requestTimeout = 60000;//&line timeout
 	this.pollingDelay = 3000;    //&line polling
 	this.pollingTimeoutObject = null;//&line [polling, timeout]
-    this.toCancel = false;
+    this.toCancel = false;//&line cancellation
     
     this.host = host;
     this.serverAction = "/upload";
@@ -48,7 +48,7 @@ Input.method("onInitRendered", function()
     this.optimizeFlag = 1;
     this.addInstancesFlag = 1;
     this.previousData = "";
-    this.toCancel = false;
+    this.toCancel = false;//&line cancellation
 
     $("#optimize").click(this.OptimizeCall.bind(this));
     $("#addInstances").click(this.addInstancesCall.bind(this));
@@ -70,14 +70,14 @@ Input.method("onInitRendered", function()
 /*
  * Cancel request
  */
-
+//$begin cancellation
 Input.method("cancelCall", function() 
 {
     $("#cancel").hide();
     $("#status_label").html("Cancelling...");
     this.toCancel = true;
 });
- 
+//$end cancellation
 /*
  * Shows uploader and hides the form
 */
@@ -85,7 +85,7 @@ Input.method("beginQuery", function(formData, jqForm, options) {
 //    	this.timeout = setTimeout(function(){that.handleTimeout();}, 65000);   
 	$("#load_area #myform").hide();
 	$("#load_area").append('<div id="preloader"><img id="preloader_img" src="/images/preloader.gif" alt="Loading..."/><span id="status_label">Loading and processing...</span><button id="cancel">Cancel</button></div>');	
-    $("#cancel").click(this.cancelCall.bind(this));
+    $("#cancel").click(this.cancelCall.bind(this));//&line cancellation
     return true; 
 });
 
@@ -110,12 +110,12 @@ Input.method("onPoll", function(response)
 {
     if (response === "Working")
     {
-        this.pollingTimeoutObject = setTimeout(this.poll.bind(this), this.pollingDelay);
-    }
+        this.pollingTimeoutObject = setTimeout(this.poll.bind(this), this.pollingDelay);//&line timeout
+    }//&begin cancellation
     else if (response === "Cancelled")
     {
         this.endQuery();
-    }
+    }//&end cancellation
     else
     {
         this.processToolResult(response);
@@ -131,7 +131,7 @@ Input.method("poll", function()
     if (!this.toCancel)
         options.data = {windowKey: this.host.key, command: "ping"};
     else
-        options.data = {windowKey: this.host.key, command: "cancel"};
+        options.data = {windowKey: this.host.key, command: "cancel"};//&line cancellation
     
     options.success = this.onPoll.bind(this);
     options.error = this.handleError.bind(this);
