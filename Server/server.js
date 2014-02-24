@@ -86,7 +86,7 @@ server.post('/poll', function(req, res, next)
         if (processes[i].windowKey == req.body.windowKey)
         {
             if (req.body.command == "ping") // normal ping
-            {                
+            {   //&begin [pingTimeout, timeout]             
                 clearTimeout(processes[i].pingTimeoutObject);
                 processes[i].pingTimeoutObject = setTimeout(function(process){
                     process.result = 'Error: Ping Timeout. Please consider increasing timeout values in the "config.json" file. Currently it equals ' + config.pingTimeout + ' millisecond(s).';
@@ -95,7 +95,7 @@ server.post('/poll', function(req, res, next)
                     process.pingTimeout = true;
                     killProcessTree(process);
                 }, config.pingTimeout, processes[i]);
-                
+                //&end [pingTimeout, timeout]
                 if (processes[i].completed) // the execution is completed
                 {
                     
@@ -109,8 +109,8 @@ server.post('/poll', function(req, res, next)
                     }
 
                     res.end(processes[i].result);
-                    clearTimeout(processes[i].pingTimeoutObject);
-                    clearTimeout(processes[i].executionTimeoutObject);                    
+                    clearTimeout(processes[i].pingTimeoutObject);//&line [pingTimeout, timeout]
+                    clearTimeout(processes[i].executionTimeoutObject);//&line [executionTimeout, timeout]                
                     processes.splice(i, 1);
                     found = true;
                 }	
@@ -124,8 +124,8 @@ server.post('/poll', function(req, res, next)
             else // if it is cancel
             {
                 killProcessTree(processes[i]);
-                clearTimeout(processes[i].pingTimeoutObject);                
-                clearTimeout(processes[i].executionTimeoutObject);
+                clearTimeout(processes[i].pingTimeoutObject);    //&line [pingTimeout, timeout]          
+                clearTimeout(processes[i].executionTimeoutObject);//&line [executionTimeout, timeout] 
                 processes.splice(i, 1);
                 res.writeHead(200, { "Content-Type": "text/html"});
                 res.end("Cancelled");
@@ -134,20 +134,20 @@ server.post('/poll', function(req, res, next)
         }
         
     }
-    
+    //&begin [pingTimeout, timeout]
     var i = 0;
     while (i < processes.length)
     {
         if (processes[i].pingTimeout)
         {
             clearTimeout(processes[i].pingTimeoutObject);
-            clearTimeout(processes[i].executionTimeoutObject);                    
+            clearTimeout(processes[i].executionTimeoutObject);    //&line executionTimeout                 
             processes.splice(i, 1);
         }
         else
             i++;
     }
-    
+  //&end [pingTimeout, timeout]
     if (!found)
     {
         res.writeHead(404, { "Content-Type": "text/html"});
@@ -306,7 +306,7 @@ server.post('/upload', function(req, res, next) {
                     console.log("Error while creating a process: " + err);
                     // TODO: handle this error properly
                 }
-				//&begin timeout
+				//&begin [timeout, executionTimeout]
 				process.executionTimeoutObject = setTimeout(function(process){
 					console.log("Request timed out.");
                     process.result = 'Error: Execution Timeout. Please consider increasing timeout values in the "config.json" file. Currently it equals ' + config.executionTimeout + ' millisecond(s).';
@@ -314,7 +314,8 @@ server.post('/upload', function(req, res, next) {
                     process.completed = true;
                     killProcessTree(process);
 				}, config.executionTimeout, process);
-			 //&end timeout			
+			 //&end [timeout, executionTimeout]		
+				//&begin [timeout, pingTimeout]
                 process.pingTimeoutObject = setTimeout(function(process){
                     process.result = 'Error: Ping Timeout. Please consider increasing timeout values in the "config.json" file. Currently it equals ' + config.pingTimeout + ' millisecond(s).';
                     process.code = 9004;
@@ -322,7 +323,7 @@ server.post('/upload', function(req, res, next) {
                     process.pingTimeout = true;
                     killProcessTree(process);
                 }, config.pingTimeout, process);
-                
+              //&end [timeout, pingTimeout]
 				//&begin errorHandling
                 var error_result = "";
 				var data_result = "";
@@ -360,7 +361,7 @@ server.post('/upload', function(req, res, next) {
                     process.result = "Error: Could not run ClaferMoo. Likely, Python or ClaferMoo have not been found. Please check whether Python is available from the command line, as well as whether ClaferMoo has been properly installed.";//&line polling
                     process.code = 9000;//&line polling
                     process.completed = true;//&line polling
-                    clearTimeout(process.executionTimeoutObject);//&line timeout
+                    clearTimeout(process.executionTimeoutObject);//&line [timeout,executionTimeout]
                 });
                 //&end errorHandling
 				tool.on('exit', function (code) 

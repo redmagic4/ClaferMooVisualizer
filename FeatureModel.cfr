@@ -35,6 +35,8 @@ ClaferMooVisualizer : ClaferWebTool
 	processManagement
         polling
         timeout
+			pingTimeout
+			executionTimeout
         errorHandling
         cancellation
 	instanceParser
