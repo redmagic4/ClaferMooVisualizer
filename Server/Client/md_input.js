@@ -56,7 +56,7 @@ Input.method("onInitRendered", function()
     $("#optimize").click(this.OptimizeCall.bind(this));
     $("#addInstances").click(this.addInstancesCall.bind(this));
     $("#myform [type='file']").change(this.inputChange.bind(this));
-
+    
     $("#optimize").attr("disabled", "disabled");
     $("#addInstances").attr("disabled", "disabled");
  
@@ -242,13 +242,13 @@ Input.method("addInstancesCall", function(){
 });
 
 Input.method("inputChange", function(){
-	var filename = $("#myform [type='file']").val()
+	var filename = $("#myform [type='file']").val();
 	if (filename.substring(filename.length-4) == ".cfr"){
-		$("#optimize").removeAttr("disabled")
+		$("#optimize").removeAttr("disabled");
 		$("#addInstances").attr("disabled", "disabled");
 	} else if (filename.substring(filename.length-5) == ".data"){
 		$("#optimize").attr("disabled", "disabled");
-		$("#addInstances").removeAttr("disabled")
+		$("#addInstances").removeAttr("disabled");
 	}
 });
 //&begin instanceProcessing
@@ -328,7 +328,6 @@ Input.method("processToolResult", function(result)
     	this.originalPoints = lines.length - 1;
     }
     data.originalPoints = this.originalPoints;
-    console.log(data);
     this.previousData = { Unparsed: ar, abstractXML: data.claferXML };
     this.host.updateData(data);
 });//&end instanceProcessing
