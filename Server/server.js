@@ -177,7 +177,7 @@ server.post('/upload', function(req, res, next)
 	console.log("/Upload request initiated.");
 
     var key = req.body.windowKey;
-    var cacheEnabled = req.body.cache;
+    var cacheEnabled = req.body.cache;//&line cache
     var currentURL = "";
     
     var uploadedFilePath = "";
@@ -349,14 +349,14 @@ server.post('/upload', function(req, res, next)
                                     res.end("error");
                                     return;
                                 }
-                                
+                              //&begin cache
                                 var cacheFound = false;
                                 
                                 var cache_folder = __dirname + "/cache/";
                                 var hash = crypto.createHash('md5').update(process.contents).digest("hex");
                                 var cache_file_name = cache_folder + hash + ".json";
                                 console.log("Cache file name: " + cache_file_name);
-
+                                
                                 if (cacheEnabled)
                                 {
                                     console.log("Checking Cache...");
@@ -377,8 +377,8 @@ server.post('/upload', function(req, res, next)
                                         console.log("Cached result no found.");
                                     }
                                 }
-                                
-                                if (!cacheFound)
+                                //&end cache
+                                if (!cacheFound)//&line cache
                                 {
                                     console.log("Processing file with ClaferMoo...");
 
@@ -492,7 +492,7 @@ server.post('/upload', function(req, res, next)
                                         process.result = result;//&line polling
                                         process.code = code;//&line polling
                                         process.completed = true;//&line polling
-                                        
+                                        //&begin cache
     //                                    if (cacheEnabled) // it can save the file to cache anyway, it does not cost much
     //                                    {
                                             fs.writeFile(cache_file_name, process.result, function(err){
@@ -506,7 +506,7 @@ server.post('/upload', function(req, res, next)
                                             }
                                             });
     //                                    }
-                                        
+                                        //&end cache
                                         console.log("The result has been sent.");                    
                                         
                                         clearTimeout(process.timeoutObject);//&line timeout

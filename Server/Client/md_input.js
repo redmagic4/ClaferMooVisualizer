@@ -424,7 +424,7 @@ Input.method("processToolResult", function(result)
     this.previousData = { Unparsed: instances, abstractXML: data.claferXML };
     this.host.updateData(data);
 });//&end instanceProcessing
-//&begin selectionOfExamples
+
 Input.method("getInitContent", function()
 {
     result = '<div id = "load_area">';
@@ -434,8 +434,9 @@ Input.method("getInitContent", function()
     result += '<input type="hidden" name="exampleFlag" id="exampleFlag" value="0">';
     result += '<input id="submitFile" type="submit" value="Optimize">';
 
-    result += '<input type="hidden" id="windowKey" name="windowKey" value="' + this.host.key + '">';
+    result += '<input type="hidden" id="windowKey" name="windowKey" value="' + this.host.key + '">';//&line windowKey
     result += '<br>';
+    //&begin selectionOfExamples
     result += '<select id="exampleURL" name="exampleURL" style="width: 388px;">';
    
 
@@ -468,14 +469,15 @@ Input.method("getInitContent", function()
     
     result += '</select>';
     result += '<input id="submitExample" type="submit" value="Optimize"></input>';
-    result += '<br>';       
-    result += '<input type="checkbox" name="cache"/>Use Cache';       
+    //&end selectionOfExamples
+    result += '<br>';       //&line cache
+    result += '<input type="checkbox" name="cache"/>Use Cache';    //&line cache   
     result += '</form></div>';
     
     return result;
 // id="addInstances"    
   
-});//&end selectionOfExamples
+});
 
 
 function unescapeJSON(escaped) 
