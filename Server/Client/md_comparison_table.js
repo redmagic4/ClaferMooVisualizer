@@ -25,10 +25,10 @@ function ComparisonTable(host)
     this.title = "Feature and Quality Matrix";
     this.host = host;
 
-    this.width = window.parent.innerWidth-30;
+    this.width = window.parent.innerWidth-30;//&line automaticViewSizing
     this.height = 600;
     this.posx = 0;
-    this.posy = this.host.findModule("mdAnalysis").posy + this.host.findModule("mdAnalysis").height + 42;
+    this.posy = this.host.findModule("mdAnalysis").posy + this.host.findModule("mdAnalysis").height + 42;//&line automaticViewSizing
     
 	this.fadeColor = "#777";
 	this.normalColor = "#000"
@@ -59,9 +59,9 @@ ComparisonTable.method("onDataLoaded", function(data){
 ComparisonTable.method("onRendered", function()
 {
 // Add circles to table headers
-    
+	//&begin automaticViewSizing
     $.resizeWindow(this.id, this.width, $("#comparison").height() + 80); // resize the table to fit everything
-
+  //&end automaticViewSizing
     this.addShapes();
 
 // Add search bar 

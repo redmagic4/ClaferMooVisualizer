@@ -25,8 +25,8 @@ function Graph(host)
     this.title = "Bubble Front Graph";
     this.host = host;
 
-    this.width = (window.parent.innerWidth-30 - this.host.findModule("mdInput").width);
-    this.height = (window.parent.innerHeight-50 - 52);
+    this.width = (window.parent.innerWidth-30 - this.host.findModule("mdInput").width);//&line automaticViewSizing
+    this.height = (window.parent.innerHeight-50 - 52);//&line automaticViewSizing
     this.posx = 500;
     this.posy = 0;
     

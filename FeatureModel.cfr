@@ -14,7 +14,8 @@ ClaferMooVisualizer : ClaferWebTool
         jquery
             windowsEngine
             forms
-        hottracking       
+        hottracking
+		automaticViewSizing	
         views
             bubbleFrontGraph
             variantComparer
