@@ -7,6 +7,7 @@ ClaferMooVisualizer : ClaferWebTool
 		fileUpload
 			handleEmptyFile
 			fileProcessing
+			compileErrorHandling
 		cleanOldFiles
 		checkingDependencies
     client

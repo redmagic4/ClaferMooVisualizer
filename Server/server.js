@@ -553,7 +553,7 @@ server.post('/upload', function(req, res, next)
                             });
                         }
                         else // an error occured
-                        {
+                        {//&begin compileErrorHandling
                             console.log('ERROR: Non-Zero Code of Clafer Compiler.');
                             res.writeHead(200, { "Content-Type": "text/html"});
 
@@ -582,7 +582,7 @@ server.post('/upload', function(req, res, next)
                                     return;
                                 }
                             });
-                        }
+                        }//&end compileErrorHandling
                     });
                     
                 });// &end fileProcessing
