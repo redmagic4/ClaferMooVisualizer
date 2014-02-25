@@ -189,7 +189,8 @@ server.post('/upload', function(req, res, next)
     var uploadedFilePath = "";
     
 	//check if client has either a file directly uploaded or a url location of a file
-   	if (req.body.exampleFlag == "1")
+   	
+    if (req.body.exampleFlag == "1")
     {
    	//&begin selectionOfExamples
         if (req.body.exampleURL !== undefined && req.body.exampleURL !== "") // if example submitted
@@ -199,47 +200,56 @@ server.post('/upload', function(req, res, next)
         }//&end selectionOfExamples
         else
         {
-            for (var x=0; x <= URLs.length; x++){
-                if (x === URLs.length){
-                    console.log("No Clafer file submitted. Returning...");
-                    res.writeHead(200, { "Content-Type": "text/html"});
-                    res.end("no clafer file submitted");
-                    return;
-                } else if (URLs[x].session === req.sessionID && ("claferFileURL=" + URLs[x].url) === url.parse(req.body.claferFileURL).query){
-                    currentURL = URLs[x].url;
-                    URLs.splice(x,1);
-                    break;
-                }
-            }
+            console.log("No example submitted. Returning...");
+            res.writeHead(200, { "Content-Type": "text/html"});
+            res.end("no clafer file submitted");
+            return;
         }		
 	} 
     else 
-    {
-        if (!req.files.claferFile)
+    {    
+        // first, check for the URL clafer file name. It happens only on clafer file submit, not the example file submit
+        var found = false;
+        for (var x = 0; x < URLs.length; x++)
         {
-            console.log("No Clafer file submitted. Returning...");
-            res.writeHead(200, { "Content-Type": "text/html"});
-            res.end("no clafer file submitted");
-            return;        
+            if (URLs[x].session === req.sessionID && ("claferFileURL=" + URLs[x].url) === url.parse(req.body.claferFileURL).query)
+            {
+                currentURL = URLs[x].url;
+                URLs.splice(x,1);
+                found = true;
+                break;
+            }
         }
     
-		uploadedFilePath = req.files.claferFile.path;
-        if (!fs.existsSync(uploadedFilePath))
+        if (!found) // if no URL was submitted
         {
-            console.log("No Clafer file submitted. Returning...");
-            res.writeHead(200, { "Content-Type": "text/html"});
-            res.end("no clafer file submitted");
-            return;
+            // then we have a series of checks, whether the file is submitted, exists, and non-empty
+            if (!req.files.claferFile)
+            {
+                console.log("No clafer file submitted. Returning...");
+                res.writeHead(200, { "Content-Type": "text/html"});
+                res.end("no clafer file submitted");
+                return;        
+            }
+        
+            uploadedFilePath = req.files.claferFile.path;
+            if (!fs.existsSync(uploadedFilePath))
+            {
+                console.log("No Clafer file submitted. Returning...");
+                res.writeHead(200, { "Content-Type": "text/html"});
+                res.end("no clafer file submitted");
+                return;
+            }
+          //&begin handleEmptyFile
+            var pre_content = fs.readFileSync(uploadedFilePath);
+            if (pre_content.length == 0)
+            {
+                console.log("No Clafer file submitted. Returning...");
+                res.writeHead(200, { "Content-Type": "text/html"});
+                res.end("no clafer file submitted");
+                return;
+            }      //&end handleEmptyFile  
         }
-        //&begin handleEmptyFile
-        var pre_content = fs.readFileSync(uploadedFilePath);
-        if (pre_content.length == 0)
-        {
-            console.log("No Clafer file submitted. Returning...");
-            res.writeHead(200, { "Content-Type": "text/html"});
-            res.end("no clafer file submitted");
-            return;
-        }//&end handleEmptyFile
 	}
     
 /* downloading the file, if required */ 
@@ -316,22 +326,20 @@ server.post('/upload', function(req, res, next)
                         cleanupOldFiles(uploadedFilePath, dlDir);
                         return;
                     }
-//>>>>>>> develop
-
-//<<<<<<< HEAD
-				if (uploadedFilePath.substring(uploadedFilePath.length - 5) == ".data")
-                {
-                    console.log("Instances have been submitted, returning them...");                
-                    process.result = '{"instances": "' + escapeJSON(file_contents) + '"}';
-                    process.code = 0;
-                    process.completed = true;
-                    processes.push(process);                    
-					cleanupOldFiles(uploadedFilePath, dlDir);
-                    res.writeHead(200, { "Content-Type": "text/html"});
-                    res.end("OK"); // just means the file has been sent sucessfully and started to processing
-                    return;
-				}
-				console.log("Processing file with the chosen backend...");
+                    
+                    if (uploadedFilePath.substring(uploadedFilePath.length - 5) == ".data")
+                    {
+                        console.log("Instances have been submitted, returning them...");                
+                        process.result = '{"instances": "' + escapeJSON(file_contents) + '"}';
+                        process.code = 0;
+                        process.completed = true;
+                        processes.push(process);                    
+                        cleanupOldFiles(uploadedFilePath, dlDir);
+                        res.writeHead(200, { "Content-Type": "text/html"});
+                        res.end("OK"); // just means the file has been sent sucessfully and started to processing
+                        return;
+                    }
+                    console.log("Processing file with the chosen backend...");
 
                     var process = { windowKey: key, tool: null, folder: dlDir, path: uploadedFilePath, completed: false, code: 0, killed:false, contents: file_contents};//&line polling
 
@@ -373,7 +381,7 @@ server.post('/upload', function(req, res, next)
                                 
                                 var cache_folder = __dirname + "/cache/";
                                 var hash = crypto.createHash('md5').update(process.contents).digest("hex");
-                                var cache_file_name = cache_folder + hash + ".json";
+                                var cache_file_name = cache_folder + hash + "_" + backendId + ".json";
                                 console.log("Cache file name: " + cache_file_name);
                                 
                                 if (cacheEnabled)
@@ -390,6 +398,7 @@ server.post('/upload', function(req, res, next)
                                         process.tool = null;
                                         processes.push(process);           
                                         cacheFound = true;
+                                        cleanupOldFiles(uploadedFilePath, dlDir); // cleaning up when cached result is found
                                     }
                                     else
                                     {
@@ -399,8 +408,6 @@ server.post('/upload', function(req, res, next)
                                 //&end cache
                                 if (!cacheFound)//&line cache
                                 {
-                    
-        //<<<<<<< HEAD
                                     try
                                     {
                                         var backend = null;

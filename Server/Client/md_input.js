@@ -70,7 +70,7 @@ Input.method("onInitRendered", function()
     options.timeout = this.requestTimeout;// &line timeout
 
     $('#myform').ajaxForm(options); 
-	$('#myform').submit();
+//	$('#myform').submit(); moved submit out of here, because the backend list is not loaded yet
 });
 /*
  * Cancel request
@@ -485,6 +485,7 @@ Input.method("getInitContent", function()
             }
             
             $("#backend").html(options);
+            $('#myform').submit(); // make the submit here            
         }
     ).error(function() 
         { 
@@ -493,7 +494,7 @@ Input.method("getInitContent", function()
         });
     
     result += '</select>';
-    result += '<input type="checkbox" name="cache"/>Use Cache';   //&line cache
+    result += '<input type="checkbox" name="cache" checked="checked"/>Use Cache';   //&line cache
     result += '</form></div>';
     
     return result;
