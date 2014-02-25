@@ -1,4 +1,4 @@
-ClaferMooVisualizer : ClaferWebTool
+ClaferMooVisualizer
     server
         or backends
             ClaferMoo
@@ -11,21 +11,11 @@ ClaferMooVisualizer : ClaferWebTool
 		cleanOldFiles
 		checkingDependencies
     client
-        jquery
-            windowsEngine
-            forms
-        hottracking
 		automaticViewSizing	
         views
             bubbleFrontGraph
-            variantComparer
-                removeVariant
-            featureAndQualityMatrix
-                expandCollapse
-                sorting
-                    byId
-                    byQuality
-                filtering 
+            variantComparer             
+            featureAndQualityMatrix                
             objectives
             claferModel
             input

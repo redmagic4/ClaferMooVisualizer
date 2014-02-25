@@ -256,7 +256,7 @@ Input.method("convertHtmlTags", function(input) {
 
   return output;
 });
-//&begin selectionOfExamples
+
 Input.method("submitFileCall", function(){
 
     $("#exampleURL").val(null);
@@ -275,7 +275,7 @@ Input.method("submitFileCall", function(){
         host.findModule("mdComparisonTable").permaHidden = {};
     }
 });
-
+//&begin selectionOfExamples
 Input.method("submitExampleCall", function(){
     this.optimizeFlag = 1;
     this.addInstancesFlag = 0;
@@ -386,8 +386,7 @@ Input.method("processToolResult", function(result)
     {
         this.handleError(null, "empty_instances", null);
         return;
-    }//&end errorHandling
-    //&begin errorHandling
+    }
     if (instancesXMLText.indexOf("<instance></instance>") >= 0)
 	{
         this.handleError(null, "malformed_instance", null);

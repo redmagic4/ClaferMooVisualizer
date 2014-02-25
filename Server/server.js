@@ -48,11 +48,11 @@ server.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + '/u
 
 var URLs = [];
 var processes = [];
-
+//&begin selectionOfExamples
 server.get('/Examples/:file', function(req, res) {
     res.sendfile('Examples/' + req.params.file);
 });
-
+//&end selectionOfExamples
 server.get('/Backends/:file', function(req, res) {
     res.sendfile('Backends/' + req.params.file);
 });
@@ -189,15 +189,15 @@ server.post('/upload', function(req, res, next)
     var uploadedFilePath = "";
     
 	//check if client has either a file directly uploaded or a url location of a file
-   	
+  //&begin selectionOfExamples
     if (req.body.exampleFlag == "1")
     {
-   	//&begin selectionOfExamples
+   	
         if (req.body.exampleURL !== undefined && req.body.exampleURL !== "") // if example submitted
         {
             console.log(req.headers.host);
             currentURL = "http://" + req.headers.host + "/Examples/" + req.body.exampleURL;                
-        }//&end selectionOfExamples
+        }
         else
         {
             console.log("No example submitted. Returning...");
@@ -205,7 +205,7 @@ server.post('/upload', function(req, res, next)
             res.end("no clafer file submitted");
             return;
         }		
-	} 
+	} //&end selectionOfExamples
     else 
     {    
         // first, check for the URL clafer file name. It happens only on clafer file submit, not the example file submit
@@ -341,15 +341,15 @@ server.post('/upload', function(req, res, next)
                     }
                     console.log("Processing file with the chosen backend...");
 
-                    var process = { windowKey: key, tool: null, folder: dlDir, path: uploadedFilePath, completed: false, code: 0, killed:false, contents: file_contents};//&line polling
+                    var process = { windowKey: key, tool: null, folder: dlDir, path: uploadedFilePath, completed: false, code: 0, killed:false, contents: file_contents};
 
                     if (uploadedFilePath.substring(uploadedFilePath.length - 5) == ".data")
                     {
                         console.log("Instances have been submitted, returning them...");                
-                        process.result = '{"instances": "' + escapeJSON(file_contents) + '"}';//&line polling
-                        process.code = 0;//&line polling
-                        process.completed = true;//&line polling
-                        processes.push(process);             //&line polling       
+                        process.result = '{"instances": "' + escapeJSON(file_contents) + '"}';
+                        process.code = 0;
+                        process.completed = true;
+                        processes.push(process);              
                         cleanupOldFiles(uploadedFilePath, dlDir);
                         res.writeHead(200, { "Content-Type": "text/html"});
                         res.end("OK"); // just means the file has been sent sucessfully and started to processing
@@ -449,16 +449,16 @@ server.post('/upload', function(req, res, next)
                                         
                                             var filtered_args = filterArgs(backend.args, __dirname + "/Backends", uploadedFilePath);                            
                                             var tool  = spawn(backend.tool, filtered_args, { cwd: dlDir, env: process.env});
-                                            process.tool = tool;//&line polling
-                                            processes.push(process);  //&line polling                    
+                                            process.tool = tool;
+                                            processes.push(process);                    
                                         }                
                                         catch(err)
-                                        {
+                                        {//&begin errorHandling
                                             console.log('ERROR: Cannot create a process.' + err);
                                             res.writeHead(400, { "Content-Type": "text/html"});
                                             res.end("error");
                                             return;
-                                        }
+                                        }//&end errorHandling
 									//&begin [timeout, executionTimeout]
                                         process.executionTimeoutObject = setTimeout(function(process){
                                             console.log("Request timed out.");
@@ -536,15 +536,15 @@ server.post('/upload', function(req, res, next)
                                                     result += '"claferXML":"' + escapeJSON(xml.toString()) + '"}';
                                                 }
                                             }
-                                            else 
+                                            else //&begin errorHandling
                                             {
                                                 result = '{"message": "' + escapeJSON('Error, return code: ' + code + '\n' + error_result) + '"}';
                                                 console.log(data_result);
                                             }
-                                            
-                                            process.result = result;//&line polling
-                                            process.code = code;//&line polling
-                                            process.completed = true;//&line polling
+                                          //&end errorHandling
+                                            process.result = result;
+                                            process.code = code;
+                                            process.completed = true;
                                           //&begin cache
         //                                    if (cacheEnabled) // it can save the file to cache anyway, it does not cost much
         //                                    {

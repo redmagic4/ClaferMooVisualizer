@@ -10,5 +10,37 @@
 	{
 		"Name": "help_pages",
 		"files": ["Server/Client/help_pages/*.*"]
-	}
+	},
+	{
+		"Name": "bubbleFrontGraph",		
+		"files": ["Server/Client/md_graph.js"]
+	},
+	{
+		"Name": "variantComparer",		
+		"files": ["Server/Client/md_analysis.js"]
+	},
+	{
+		"Name": "featureAndQualityMatrix",		
+		"files": ["Server/Client/md_comparison_table.js"]
+	},
+	{
+		"Name": "objectives",		
+		"files": ["Server/Client/md_goals.js"]
+	},
+	{
+		"Name": "input",		
+		"files": ["Server/Client/md_input.js"]
+	},
+	{
+		"Name": "icons",		
+		"files": ["Server/Client/images/*.*"]
+	},
+	{
+		"Name": "help_pages",		
+		"files": ["Server/Client/help_pages/*.*"]
+	},
+	{
+		"Name": "console",		
+		"files": ["Server/Client/md_console.js"]
+	},
 ]
