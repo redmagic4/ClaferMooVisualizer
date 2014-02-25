@@ -384,173 +384,193 @@ server.post('/upload', function(req, res, next)
 //                                    cleanupOldFiles(uploadedFilePath, dlDir); // cleaning up when cached result is found
 //                                    return;
                                 }
-                              //&begin cache
-                                var cacheFound = false;
                                 
-                                var cache_folder = __dirname + "/cache/";
-                                var hash = crypto.createHash('md5').update(process.contents).digest("hex");
-                                var cache_file_name = cache_folder + hash + "_" + backendId + ".json";
-                                console.log("Cache file name: " + cache_file_name);
-                                
-                                if (cacheEnabled)
-                                {
-                                    console.log("Checking Cache...");
-                                    
-                                    if (fs.existsSync(cache_file_name))
-                                    {
-                                        console.log("Found cached result, returning.");
+                                // temporary, intil multiple options are implemented:
+                                var clafer_compiler_XML  = spawn("clafer", ["--mode=XML", uploadedFilePath]);
+                                // -----                                
 
-                                        process.result = fs.readFileSync(cache_file_name); 
-                                        process.code = 0;
-                                        process.completed = true;
-                                        process.tool = null;
-                                        processes.push(process);           
-                                        cacheFound = true;
-                                        cleanupOldFiles(uploadedFilePath, dlDir); // cleaning up when cached result is found
-                                    }
-                                    else
-                                    {
-                                        console.log("Cached result no found.");
-                                    }
-                                }
-                                //&end cache
-                                if (!cacheFound)//&line cache
-                                {
-                                    try
-                                    {
-                                        var backend = null;
+                                clafer_compiler_XML.on('exit', function (code2)
+                                {	//&begin cache                                
+                                    var cacheFound = false;
                                     
-                                        for (var i = 0; i < backendConfig.backends.length; i++)
-                                        {
-                                            var found = false;
-                                            if (backendConfig.backends[i].id == backendId)
-                                            {
-                                                found = true;
-                                                backend = backendConfig.backends[i];
-                                                console.log('Backend Identified: "' + backendId + '".');
-                                                break;
-                                            }
-                                        }
+                                    var cache_folder = __dirname + "/cache/";
+                                    var hash = crypto.createHash('md5').update(process.contents).digest("hex");
+                                    var cache_file_name = cache_folder + hash + "_" + backendId + ".json";
+                                    console.log("Cache file name: " + cache_file_name);
+
+                                    if (cacheEnabled)
+                                    {
+                                        console.log("Checking Cache...");
                                         
-                                        if (!found)
+                                        if (fs.existsSync(cache_file_name))
                                         {
-                                            console.log('ERROR: Could not find a backend profile: "' + backendId + '".');
+                                            console.log("Found cached result, returning.");
+
+                                            process.result = fs.readFileSync(cache_file_name); 
+                                            process.code = 0;
+                                            process.completed = true;
+                                            process.tool = null;
+                                            processes.push(process);           
+                                            cacheFound = true;
+                                            cleanupOldFiles(uploadedFilePath, dlDir); // cleaning up when cached result is found
+                                        }
+                                        else
+                                        {
+                                            console.log("Cached result no found.");
+                                        }
+                                    }//&end cache
+                                    
+                                    if (!cacheFound)//&line cache
+                                    {
+                                        try
+                                        {
+                                            var backend = null;
+                                        
+                                            for (var i = 0; i < backendConfig.backends.length; i++)
+                                            {
+                                                var found = false;
+                                                if (backendConfig.backends[i].id == backendId)
+                                                {
+                                                    found = true;
+                                                    backend = backendConfig.backends[i];
+                                                    console.log('Backend Identified: "' + backendId + '".');
+                                                    break;
+                                                }
+                                            }
+                                            
+                                            if (!found)
+                                            {
+                                                console.log('ERROR: Could not find a backend profile: "' + backendId + '".');
+                                                res.writeHead(400, { "Content-Type": "text/html"});
+                                                res.end("error");
+                                                return;
+                                            }
+                                        
+                                        
+                                            var filtered_args = filterArgs(backend.args, __dirname + "/Backends", uploadedFilePath);                            
+                                            var tool  = spawn(backend.tool, filtered_args, { cwd: dlDir, env: process.env});
+                                            process.tool = tool;//&line polling
+                                            processes.push(process);  //&line polling                    
+                                        }                
+                                        catch(err)
+                                        {
+                                            console.log('ERROR: Cannot create a process.' + err);
                                             res.writeHead(400, { "Content-Type": "text/html"});
                                             res.end("error");
                                             return;
                                         }
-                                    
-                                    
-                                        var filtered_args = filterArgs(backend.args, __dirname + "/Backends", uploadedFilePath);                            
-                                        var tool  = spawn(backend.tool, filtered_args, { cwd: dlDir, env: process.env});
-                                        process.tool = tool;//&line polling
-                                        processes.push(process);   //&line polling                 
-                                    }                
-                                    catch(err)
-                                    {
-                                        console.log('ERROR: Cannot create a process.' + err);
-                                        res.writeHead(400, { "Content-Type": "text/html"});
-                                        res.end("error");
-                                        return;
+									//&begin [timeout, executionTimeout]
+                                        process.executionTimeoutObject = setTimeout(function(process){
+                                            console.log("Request timed out.");
+                                            process.result = '{"message": "' + escapeJSON('Error: Execution Timeout. Please consider increasing timeout values in the "config.json" file. Currently it equals ' + config.executionTimeout + ' millisecond(s).') + '"}';
+                                            process.code = 9003;
+                                            process.completed = true;
+                                            killProcessTree(process);
+                                        }, config.executionTimeout, process);
+									//&end [timeout, executionTimeout]
+									//&begin [timeout, pingTimeout]   
+                                        process.pingTimeoutObject = setTimeout(function(process){
+                                            process.result = '{"message": "' + escapeJSON('Error: Ping Timeout. Please consider increasing timeout values in the "config.json" file. Currently it equals ' + config.pingTimeout + ' millisecond(s).') + '"}';
+                                            process.code = 9004;
+                                            process.completed = true;
+                                            process.pingTimeout = true;
+                                            killProcessTree(process);
+                                        }, config.pingTimeout, process);
+                                      //&end [timeout, pingTimeout]
+                                        //&begin errorHandling
+                                        var error_result = "";
+                                        var data_result = "";
+
+                                        tool.stdout.on('data', function (data){	
+                                            data_result += data;
+                                        });
+
+                                        tool.stderr.on('data', function (data) {
+                                            error_result += data;
+                                        });//&end errorHandling	
+
+                                        tool.on('exit', function (code) 
+                                        {
+                                            var result = "";
+                                            console.log("Process OnExit handler...");
+                                          //&begin cancellation
+                                            if (process.killed) // has been terminated
+                                            {
+                                                console.log("Finished cancellation");
+                                                code = 9001; // just a non-zero value 
+                                                cleanupOldFiles(uploadedFilePath, dlDir); 
+                                                clearTimeout(process.timeoutObject);
+
+                                                return;
+                                            }
+
+                                            console.log("Preparing to send the result...");
+											//&end cancellation
+                                            if(error_result.indexOf('Exception in thread "main"') > -1){
+                                                code = 1;
+                                            }
+                                            if (code === 0) 
+                                            {				
+                                                var parts = data_result.split("=====");
+                                                
+                                                if (parts.length != 2)
+                                                {
+                                                    result = '{"message": "' + escapeJSON('Error, instances and normal text must be separated by "====="') + '}';
+                                                    console.log(data_result);
+                                                }
+                                                else
+                                                {
+                                                
+                                                    var message = parts[0]; //
+                                                    console.log(message);
+                                                    var instances = parts[1]; // 
+                                                    // todo : error handling
+                                                    
+                                                    console.log(changeFileExt(uploadedFilePath, '.cfr', '.xml'));
+                                                    var xml = fs.readFileSync(changeFileExt(uploadedFilePath, '.cfr', '.xml'));
+                                                    // this code assumes the backend should produce an XML,
+                                                    // which is not the correct way
+                                                    
+                                                    result = '{"message": "' + escapeJSON(message) + '",';
+                                                    result += '"instances": "' + escapeJSON(instances) + '",';
+                                                    result += '"claferXML":"' + escapeJSON(xml.toString()) + '"}';
+                                                }
+                                            }
+                                            else 
+                                            {
+                                                result = '{"message": "' + escapeJSON('Error, return code: ' + code + '\n' + error_result) + '"}';
+                                                console.log(data_result);
+                                            }
+                                            
+                                            process.result = result;//&line polling
+                                            process.code = code;//&line polling
+                                            process.completed = true;//&line polling
+                                          //&begin cache
+        //                                    if (cacheEnabled) // it can save the file to cache anyway, it does not cost much
+        //                                    {
+                                                fs.writeFile(cache_file_name, process.result, function(err){
+                                                if (err)
+                                                {
+                                                    console.log("Could not write cache: " + cache_file_name);                    
+                                                }
+                                                else
+                                                {
+                                                    console.log("The cache file successfully saved: " + cache_file_name);                                                        
+                                                }
+                                                });
+        //                                    }
+                                              //&end cache
+                                            console.log("The result has been sent.");                    
+                                            
+                                            clearTimeout(process.timeoutObject);//&line timeout
+                                                
+                                            // cleanupOldFiles(uploadedFilePath, dlDir); 
+                                            // we clean old files here, since the result is stored in the result variable
+                                        });                    
                                     }
-                                  //&begin [timeout, executionTimeout]
-                                    process.executionTimeoutObject = setTimeout(function(process){
-                                        console.log("Request timed out.");
-                                        process.result = '{"message": "' + escapeJSON('Error: Execution Timeout. Please consider increasing timeout values in the "config.json" file. Currently it equals ' + config.executionTimeout + ' millisecond(s).') + '"}';
-                                        process.code = 9003;
-                                        process.completed = true;
-                                        killProcessTree(process);
-                                    }, config.executionTimeout, process);
-                                  //&end [timeout, executionTimeout]
-                                  //&begin [timeout, pingTimeout]
-                                    process.pingTimeoutObject = setTimeout(function(process){
-                                        process.result = '{"message": "' + escapeJSON('Error: Ping Timeout. Please consider increasing timeout values in the "config.json" file. Currently it equals ' + config.pingTimeout + ' millisecond(s).') + '"}';
-                                        process.code = 9004;
-                                        process.completed = true;
-                                        process.pingTimeout = true;
-                                        killProcessTree(process);
-                                    }, config.pingTimeout, process);
-                                  //&end [timeout, pingTimeout]
-                                  //&begin errorHandling
-                                    var error_result = "";
-                                    var data_result = "";
-
-                                    tool.stdout.on('data', function (data){	
-                                        data_result += data;
-                                    });
-
-                                    tool.stderr.on('data', function (data) {
-                                        error_result += data;
-                                    });//&end errorHandling	
-
-                                    tool.on('exit', function (code) 
-                                    {
-                                        var result = "";
-                                        console.log("Process OnExit handler...");
-                                      //&begin cancellation
-                                        if (process.killed) // has been terminated
-                                        {
-                                            console.log("Finished cancellation");
-                                            code = 9001; // just a non-zero value 
-                                            cleanupOldFiles(uploadedFilePath, dlDir); 
-                                            clearTimeout(process.timeoutObject);
-
-                                            return;
-                                        }
-
-                                        console.log("Preparing to send the result...");
-                                      //&end cancellation
-                                        if(error_result.indexOf('Exception in thread "main"') > -1){
-                                            code = 1;
-                                        }
-                                        if (code === 0) 
-                                        {				
-                                            var parts = data_result.split("=====");
-                                            var message = parts[0]; //
-                                            console.log(message);
-                                            var instances = parts[1]; // 
-                                            // todo : error handling
-                                            
-                                            var xml = fs.readFileSync(changeFileExt(uploadedFilePath, '.cfr', '.xml'));
-                                            result = '{"message": "' + escapeJSON(message) + '",';
-                                            result += '"instances": "' + escapeJSON(instances) + '",';
-                                            result += '"claferXML":"' + escapeJSON(xml.toString()) + '"}';
-                                        }
-                                        else 
-                                        {
-                                            result = '{"message": "' + escapeJSON('Error, return code: ' + code + '\n' + error_result) + '"}';
-                                            console.log(data_result);
-                                        }
-                                        
-                                        process.result = result;//&line polling
-                                        process.code = code;//&line polling
-                                        process.completed = true;//&line polling
-                                        //&begin cache
-    //                                    if (cacheEnabled) // it can save the file to cache anyway, it does not cost much
-    //                                    {
-                                            fs.writeFile(cache_file_name, process.result, function(err){
-                                            if (err)
-                                            {
-                                                console.log("Could not write cache: " + cache_file_name);                    
-                                            }
-                                            else
-                                            {
-                                                console.log("The cache file successfully saved: " + cache_file_name);                                                        
-                                            }
-                                            });
-    //                                    }
-                                        //&end cache
-                                        console.log("The result has been sent.");                    
-                                        
-                                        clearTimeout(process.timeoutObject);//&line timeout
-                                            
-                                        cleanupOldFiles(uploadedFilePath, dlDir); 
-                                        // we clean old files here, since the result is stored in the result variable
-                                    });                    
-                                }
-                                res.writeHead(200, { "Content-Type": "text/html"});
-                                res.end(html); // sending the HTML to the result 
-
+                                    res.writeHead(200, { "Content-Type": "text/html"});
+                                    res.end(html); // sending the HTML to the result 
+                                });
                             });
                         }
                         else // an error occured
