@@ -517,8 +517,8 @@ function processToolResult(result)
 	
 }
 
-var comparisonTable = "";
-var comparisonTableToggled = false;
+var comparisonTable = "";//&line [ComparisonTable]
+var comparisonTableToggled = false;//&line [ComparisonTable]
 
 function toggleRow(row, isOn)
 {
@@ -541,7 +541,7 @@ function toggleRow(row, isOn)
     }
 */
 }
-
+//&begin [ComparisonTable]
 function toggleComparisonTable()
 {
     comparisonTableToggled = !comparisonTableToggled;
@@ -596,7 +596,7 @@ function toggleComparisonTable()
         }
     }
 }
-
+//&end [ComparisonTable]
 function onDataPreProcessed()
 {
 	processor.ack();
@@ -700,7 +700,7 @@ function mapValue(sVal)
 		
 	return result;
 }
-
+//&begin [ComparisonTable]
 function getComparisonHtml()
 {
 	var instanceCount = processor.getInstanceCount();
@@ -767,3 +767,4 @@ function getComparisonHtml()
 	return table;	
 
 }
+//&end [ComparisonTable]
