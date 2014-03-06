@@ -1,16 +1,3 @@
-lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
 *.project
+.zip
 
-pids
-logs
-results
-
-node_modules
-npm-debug.log
