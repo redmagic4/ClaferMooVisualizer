@@ -6,6 +6,7 @@ ClaferMooVisualizer
 		jquery
         views
 			ParetoFrontVisualizer
+				scatter
 		instanceProcessor
 		XMLProcessor
 		icons

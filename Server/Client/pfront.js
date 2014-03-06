@@ -92,7 +92,7 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
 }
 
 /* SCATTER */
-
+//&begin [scatter]
 function ParetoFrontVisualizerScatter (element) 
 {
 	this.element = element;
@@ -193,4 +193,4 @@ ParetoFrontVisualizerScatter.prototype.draw = function(processor, args, labels)
 		
 	
 }
-
+//&end [scatter]
