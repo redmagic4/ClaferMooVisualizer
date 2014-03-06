@@ -42,7 +42,7 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
 		var second = processor.getFeatureValue(i, args[1], true); // get only numeric
 		
 		point = new Array();
-		point.push("" + i);
+		point.push("P" + i);
 		point.push(first);
 		point.push(second);
         
@@ -78,15 +78,22 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
     if (maxX > maxY)
         maxY = maxX;
     
+    var chartWidth;
+    var chartHeight;
+    
     if (hasThird)
     {
         colorAxisLegendPosition = "top";
-        chartTop = 30;
+        chartTop = 26;
+        chartHeight = "88%";
+        chartWidth = "88%";
     }
     else 
     {
         colorAxisLegendPosition = "none";
         chartTop = 10;
+        chartHeight = "91%";
+        chartWidth = "91%";
     }
     
     data.addRows(rows);          
@@ -94,7 +101,7 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
 	var options = {
 //	  theme: 'maximized', 
 	  title: '',
-      chartArea: {left:"20", top:chartTop, width: "100%", height: "88%"},
+      chartArea: {left:"20", top:chartTop, width: chartWidth, height: chartHeight},
       titleTextStyle: {color: "black", fontName: "Arial", fontSize: 12},
 	  hAxis: {maxValue: maxX, minValue: minX},
 	  vAxis: {maxValue: maxY, minValue: minY},
