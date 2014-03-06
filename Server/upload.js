@@ -12,7 +12,7 @@ var python = "python";
 
 var port = 8080;
 
-var useCache = false;
+var useCache = true;
 var cacheFileName = "cache.txt";
 
 var server = http.createServer(function(req, res) {
@@ -227,7 +227,7 @@ function upload_complete(res, fileName) {
 		if (code === 0) 
 		{
 			result = "Return code = " + code + "\n" + data_result + "=====";
-			var xml = fs.readFileSync(changeFileExt(file_name, '.cfr', '.xml'));
+			var xml = fs.readFileSync(changeFileExt(file_name, '.cfr', '_desugared.xml'));
 //			result += xml;
 			result += xml.toString();
 			
