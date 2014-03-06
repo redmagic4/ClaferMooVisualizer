@@ -1,6 +1,13 @@
 ClaferMooVisualizer
     server
         or backends
+			ClaferMoo
     client
+		jquery
         views
+			ParetoFrontVisualizer
+		instanceProcessor
+		XMLProcessor
+		icons
 	processManagement
+	multipart
