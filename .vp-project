@@ -18,6 +18,7 @@ ClaferMooVisualizer
 			input
 				processToolResult
 			multipleSelection
+			ListVisualizer
 		instanceProcessor	
 		claferProcessor
 		icons

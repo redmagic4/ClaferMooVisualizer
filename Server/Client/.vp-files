@@ -16,6 +16,8 @@ md_usecases.js
 useCases
 md_analysis.js
 variantComparer
+plist.js
+ListVisualizer
 ptable.js data.js
 dataTable
 selector.js
