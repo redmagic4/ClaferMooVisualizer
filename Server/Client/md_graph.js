@@ -268,7 +268,7 @@ function setDim(el, w, h)
 //    $(el).css("width", w + "px");
 //    $(el).css("height", h + "px");
 }
-
+//&begin [graphResizing]
 Graph.method("resize", function() // not attached to the window anymore, so need to call the method
 {
 
@@ -326,3 +326,4 @@ Graph.method("resize", function() // not attached to the window anymore, so need
     }
 	return true;
 });
+//&end [graphResizing]

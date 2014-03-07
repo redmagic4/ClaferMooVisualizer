@@ -15,6 +15,7 @@ ClaferMooVisualizer
 			bubbleFrontGraph
 				ParetoFrontVisualizer
 					scatter
+				graphResizing	
 			useCases	
 			objectives
 			console
