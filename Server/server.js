@@ -82,7 +82,6 @@ server.post('/upload', function(req, res, next) {
 	//&begin [timeout]
     //serverTimeout = setTimeout(function(){
     //	res.send ("Serverside Timeout.");
-    //	return;
     //}, 60000);
 	//&end [timeout]
 	fs.readFile(uploadedFilePath, function (err, data) {
