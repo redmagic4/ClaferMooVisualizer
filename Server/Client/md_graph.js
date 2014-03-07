@@ -158,7 +158,7 @@ Graph.method("redrawParetoFront", function()
 });
 
     
-
+//&begin [multipleSelection]
 function pointClick()
 {
     var pid = this.firstChild.nodeValue;
@@ -211,7 +211,7 @@ Graph.method("makePointsSelected", function(points)
         });
     }
 });
-
+//&end [multipleSelection]
 Graph.method("assignToAxis", function(axis, arg, label)
 {
 	this.assignValue(axis + "AxisConfig_arg", arg);
