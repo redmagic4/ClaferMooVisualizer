@@ -48,6 +48,11 @@ img.tick{
 	height:18px;
 }
 
+#graph_table{
+  table-layout:fixed;
+  border-spacing:0px;
+}
+
 img.no{
 	width:18px;
 	height:18px;
