@@ -39,7 +39,13 @@ ComparisonTable.method("onRendered", function()
 
     $('#toggle_link').html("Distinct");
     $('#toggle_link').click(this.toggleDistinct.bind(this));
-    
+
+    var td = $('#comparison .table_title')[0];
+    $(td).append('&nbsp;<button id="filter_reset">Toggle</button>');
+
+    $('#filter_reset').html("Reset");
+    $('#filter_reset').click(this.resetFilters.bind(this));
+
     this.addHovering();
 
     var i = 1;
@@ -62,7 +68,14 @@ ComparisonTable.method("onRendered", function()
                 this.className = "maybe";
                 that.filterContent();
             }
+//            if (this.hasClass("wanted") || this.hasClass("unwanted"))
+//                if (that.toggled)
+//                    toggleRow($("#r" + i), true);
+//            else
+//                if (that.toggled)
+//                    toggleRow($("#r" + i), false);
         });
+            
         i++;
         row = $("#r" + i);
     }
@@ -71,43 +84,72 @@ ComparisonTable.method("onRendered", function()
 //&begin [contentFilter]
 ComparisonTable.method("filterContent", function(){
     this.unFilter();
+
     console.log("filter called");
     var i = 1;
-    row = $("#r" + i);
-    row_length = row.find(".td_instance").length
+    
+    var graph_data = $("#chart g:contains('P1')")[2];
+    var circle_pairs = [];
+    for (i=0; i<graph_data.children.length;i+=2){
+        circle_pairs.push({ circle: graph_data.children[i], text_data: graph_data.children[i+1], ident: ""});
+    }
+
+    for (i=0; i<circle_pairs.length; i++){
+        circle_pairs[i].ident = $(circle_pairs[i].text_data).text().replace(/[A-Za-z]/g, "");
+    }
+
+    circle_pairs.sort(function(a,b){
+        return a.ident - b.ident;
+    });
+
+    for (i=0; i<circle_pairs.length; i++){
+        console.log(circle_pairs[i].ident);
+    }
+
+    i=0;
+    row = $("#mdComparisonTable #r" + i);
+    row_length = row.find(".td_instance").length;
     while (row.length != 0){
         if (!row.find(".numeric").length){
-            filter = $("#r" + i + "box").attr("Class");
+            filter = $("#mdComparisonTable #r" + i + "box").attr("Class");
             for (var x = 1; x <= row_length; x++){
                 if (filter == "maybe")
                     break;
-                else if (filter == "wanted" && $("#td" + (i-1) + "_" + x).hasClass("no")) {
-                    $("#th0_" + x).hide();
-                    this.hidden.push("#th0_" + x)
+                else if (filter == "wanted" && $("#mdComparisonTable #td" + (i-1) + "_" + x).hasClass("no")) {
+                    $("#mdComparisonTable #th0_" + x).hide();
+                    this.hidden.push("#mdComparisonTable #th0_" + x);
+                    $(circle_pairs[x-1].circle).hide();
+                    $(circle_pairs[x-1].text_data).hide();
+                    this.hidden.push(circle_pairs[x-1].circle);
+                    this.hidden.push(circle_pairs[x-1].text_data);
                     var y = 1;
-                    var row_with_removal = $("#r" + y);
+                    var row_with_removal = $("#mdComparisonTable #r" + y);
                     while (row_with_removal.length != 0){
-                        $("#td"+ (y-1) +"_" + x).hide();
-                        this.hidden.push("#td"+ (y-1) +"_" + x)
+                        $("#mdComparisonTable #td"+ (y-1) +"_" + x).hide();
+                        this.hidden.push("#mdComparisonTable #td"+ (y-1) +"_" + x);
                         y++;
-                        row_with_removal = $("#r" + y);
+                        row_with_removal = $("#mdComparisonTable #r" + y);
                     }
-                } else if (filter == "unwanted" && $("#td" + (i-1) + "_" + x).hasClass("tick")) {
-                    $("#th0_" + x).hide();
-                    this.hidden.push("#th0_" + x)
+                } else if (filter == "unwanted" && $("#mdComparisonTable #td" + (i-1) + "_" + x).hasClass("tick")) {
+                    $("#mdComparisonTable #th0_" + x).hide();
+                    this.hidden.push("#mdComparisonTable #th0_" + x);
+                    $(circle_pairs[x-1].circle).hide();
+                    $(circle_pairs[x-1].text_data).hide();
+                    this.hidden.push(circle_pairs[x-1].circle);
+                    this.hidden.push(circle_pairs[x-1].text_data);
                     var y = 1;
-                    var row_with_removal = $("#r" + y);
+                    var row_with_removal = $("#mdComparisonTable #r" + y);
                     while (row_with_removal.length != 0){
-                        $("#td"+ (y-1) +"_" + x).hide();
-                        this.hidden.push("#td"+ (y-1) +"_" + x)
+                        $("#mdComparisonTable #td"+ (y-1) +"_" + x).hide();
+                        this.hidden.push("#mdComparisonTable #td"+ (y-1) +"_" + x);
                         y++;
-                        row_with_removal = $("#r" + y);
+                        row_with_removal = $("#mdComparisonTable #r" + y);
                     }
                 }
             }
         }
         i++;
-        row = $("#r" + i);
+        row = $("#mdComparisonTable #r" + i);
     }
 });
 
@@ -115,6 +157,21 @@ ComparisonTable.method("unFilter", function(){
     while(this.hidden.length){
         $(this.hidden.pop()).show();
     }
+});
+
+ComparisonTable.method("resetFilters", function(){
+    var i = 1;
+    row = $("#r" + i);
+    while (row.length != 0){
+        if (!(row.find(".numeric").length)){
+            current = document.getElementById("r" + i + "box");
+            current.src = "images/checkbox_empty.bmp";
+            current.className = "maybe";
+        }
+        i++;
+        row = $("#r" + i);
+    }
+    this.filterContent();
 });
 //&end [contentFilter]
 ComparisonTable.method("getContent", function()
@@ -261,20 +318,22 @@ ComparisonTable.method("toggleDistinct", function()
 
             for (var j = 0; j < instanceTds.length; j++)
             {
-
-                if ($(instanceTds[j]).hasClass("tick"))
+                if ($(instanceTds[j]).css("display") == "none"){
+                    //do nothing
+                }
+                else if ($(instanceTds[j]).hasClass("tick"))
                 {
                     if (last == "" || last == "tick")
                         last = "tick";
-                    else allAreTheSame = false;
+                    else {allAreTheSame = false; break;}
                 }   
                 else if ($(instanceTds[j]).hasClass("no"))
                 {
                     if (last == "" || last == "no")
                         last = "no";
-                    else allAreTheSame = false;
+                    else {allAreTheSame = false; break;}
                 }
-                else allAreTheSame = false;
+                else {allAreTheSame = false; break;}
             }
             
             if (allAreTheSame)
