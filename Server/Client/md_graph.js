@@ -1,28 +1,38 @@
 function Graph(host)
-{ 
-    this.host = host;
+{
+    this.instanceProcessor = null;
+    this.axisArray = new Array();
     this.PFVisualizer = new ParetoFrontVisualizer("chart");
+    this.host = host;
 }
 
-Graph.method("onDataLoaded", function(claferXML, instancesXML){
-    this.processor = new ClaferProcessor(claferXML);
-    this.instanceProcessor = new InstanceProcessor(claferXML);     
+Graph.method("onDataLoaded", function(data){
+    this.instanceProcessor = new InstanceProcessor(data.instancesXML);     
 });
 
 Graph.method("onRendered", function()
 {
-	if (this.host.mdGoals.goals.length >= 2)
+    this.goals = mdGoals.goals;
+    
+    var dropPlaces = $(".axis_drop");
+    for (var i = 0; i < dropPlaces.length; i++)
+    {
+        $(".axis_drop")[i].ondrop = this.drop.bind(this);
+        $(".axis_drop")[i].ondragover = this.allowDrop.bind(this);
+    }
+
+	if (this.goals.length >= 2)
 	{
 		$("#chart").show();
-		this.assignToAxis("dropPointX", this.host.mdGoals.goals[0].arg, this.host.mdGoals.goals[0].label);
-		this.assignToAxis("dropPointY", this.host.mdGoals.goals[1].arg, this.host.mdGoals.goals[1].label);
+		this.assignToAxis("dropPointX", this.goals[0].arg, this.goals[0].label);
+		this.assignToAxis("dropPointY", this.goals[1].arg, this.goals[1].label);
         
-        if (this.host.mdGoals.goals.length == 3)
+        if (this.goals.length == 3)
         {
-            assignToAxis("dropPointZ", this.host.mdGoals.goals[2].arg, this.host.mdGoals.goals[2].label);
+            this.assignToAxis("dropPointZ", this.goals[2].arg, this.goals[2].label);
         }
         else 
-            assignToAxis("dropPointZ", "", "");
+            this.assignToAxis("dropPointZ", "", "");
         
         this.redrawParetoFront();
 	}
@@ -40,11 +50,6 @@ Graph.method("graphResize", function(e)
 Graph.method("allowDrop", function(ev)
 {
 	ev.preventDefault();
-});
-
-Graph.method("drag", function(ev)
-{
-	ev.dataTransfer.setData("Text", ev.target.id + "|" + ev.target.className);
 });
 
 Graph.method("drop", function(ev)
@@ -102,9 +107,9 @@ Graph.method("redrawParetoFront", function()
     $("#dropPointZ").html("<div>" + label3 + "</div>");
         
     if (arg3 != "")
-        this.PFVisualizer.draw(instanceProcessor, [arg1, arg2, arg3], [label1, label2, label3]);
+        this.PFVisualizer.draw(this.instanceProcessor, [arg1, arg2, arg3], [label1, label2, label3]);
     else
-    	this.PFVisualizer.draw(instanceProcessor, [arg1, arg2], [label1, label2]);
+    	this.PFVisualizer.draw(this.instanceProcessor, [arg1, arg2], [label1, label2]);
 });
 
 Graph.method("assignToAxis", function(axis, arg, label)
@@ -122,16 +127,15 @@ Graph.method("getContent", function()
     var tdChart = $('<td id="chart" style="display:none; width:95%; height:95%"></td>');
     var tdX = $('<td colspan="2" id="dropPointX" class="axis_drop"></td>');
 
-    var axisArray = new Array();
-    axisArray.push(tdX);
-    axisArray.push(tdY);
-    axisArray.push(tdZ);
+    this.axisArray.splice(0, this.axisArray.length); // clear the array
+    this.axisArray = new Array();
+    this.axisArray.push(tdX);
+    this.axisArray.push(tdY);
+    this.axisArray.push(tdZ);
     
-    for (var i = 0; i < axisArray.length; i++)
+    for (var i = 0; i < this.axisArray.length; i++)
     {
-        axisArray[i].html("&nbsp;");
-        axisArray[i].ondrop = this.drop.bind(this);
-        axisArray[i].ondragover = this.allowDrop.bind(this);
+        this.axisArray[i].html("&nbsp;");
     }
     
     var row1 = $('<tr></tr>').append(tdZ);
@@ -145,4 +149,9 @@ Graph.method("getContent", function()
 		
 	return table;	
     
+});
+
+Graph.method("getInitContent", function()
+{
+	return this.getContent();
 });
