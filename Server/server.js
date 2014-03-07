@@ -43,6 +43,7 @@ server.get('/', function(req, res) {
  */
 server.post('/upload', function(req, res, next) {
 	//check if client has either a file directly uploaded or a url location of a file
+	//&begin [urlUploading]
    	if (req.files.claferFile === undefined){
    			for (var x=0; x <= URLs.length; x++){
    				if (x === URLs.length){
@@ -69,7 +70,7 @@ server.post('/upload', function(req, res, next) {
 	} else {
 		var uploadedFilePath = req.files.claferFile.path;
 	}
-
+  //&end [urlUploading]
 	var file_contents;
 	console.log("proceeding with " + uploadedFilePath);
     // read the contents of the uploaded file
