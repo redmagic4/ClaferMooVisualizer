@@ -4,9 +4,11 @@ ClaferMooVisualizer
 			ClaferMoo
     client
 		jquery
+		JSClass
         views			
 			featureAndQualityMatrix
 				dataTable
+			variantComparer	
 			bubbleFrontGraph
 				ParetoFrontVisualizer
 					scatter
