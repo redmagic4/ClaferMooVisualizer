@@ -27,12 +27,12 @@ var URLs = [];
 server.get('/', function(req, res) {
 //uploads now and runs once app.html is fully loaded
 //works because client currently sends one empty post upon completion of loading
-//!!!still has serious concurrency issues!!!
 	if (req.query.claferFileURL) {
 		var sessionURL = new Object
 		sessionURL.session = req.sessionID;
 		sessionURL.url = req.query.claferFileURL;
 		URLs.push(sessionURL);
+		console.log(req.sessionID);
 	}
     res.sendfile("Client/app.html");
 });
@@ -49,10 +49,15 @@ server.post('/upload', function(req, res, next) {
    				if (x === URLs.length){
    					res.send("no clafer file submitted");
    					return;
-   				} else if (URLs[x].session === req.sessionID){
+   				} else if (URLs[x].session === req.sessionID && ("claferFileURL=" + URLs[x].url) === url.parse(req.body.claferFileURL).query){
+   					var i = 0;
    					var uploadedFilePath = req.sessionID;
    					uploadedFilePath = uploadedFilePath.replace("/", "");
-   					uploadedFilePath = "./uploads/" + uploadedFilePath + ".cfr"
+   					uploadedFilePath = "./uploads/" + uploadedFilePath;
+   					while(fs.existsSync(uploadedFilePath + i.toString() + ".cfr")){
+   						i = i+1;
+   					}
+   					uploadedFilePath = uploadedFilePath + i.toString() + ".cfr";
 					console.log("downloading file at " + URLs[x].url);
 					var file = fs.createWriteStream(uploadedFilePath);
 					http.get(URLs[x].url, function(res){
@@ -125,33 +130,29 @@ function cleanupOldFiles(path) {
 	//cleanup old files
 	var ending = path.toLowerCase().substring(path.length - 4);
 	console.log("Running Cleanup");
-	fs.unlink(path, function (err) {   //delete .cfr
-  	if (err) throw err;
- 		console.log("successfully deleted " + path);
-	});
-	if (ending == ".cfr"){   //just added this because I realized people could kill the server with a bad file
-		fs.unlink(changeFileExt(path, '.cfr', '.xml'), function (err) {   //delete .xml
-	  		if (err) throw err;
- 			console.log("successfully deleted " + changeFileExt(path, '.cfr', '.xml'));
-		});
-		fs.unlink(changeFileExt(path, '.cfr', '_desugared.xml'), function (err) {   //delete _desugared.xml
-			if (err) throw err;
-			console.log("successfully deleted " + changeFileExt(path, '.cfr', '_desugared.xml'));
-		});
-		fs.unlink(changeFileExt(path, '.cfr', '_desugared.als'), function (err) {    //delete _desugared.als
-			if (err) throw err;
-			console.log("successfully deleted " + changeFileExt(path, '.cfr', '_desugared.als'));
-		});
-		fs.unlink(changeFileExt(path, '.cfr', '_desugared.cfr'), function (err) {    //delete _desugared.cfr
-			if (err) throw err;
-			console.log("successfully deleted " + changeFileExt(path, '.cfr', '_desugared.cfr'));
-		});
-		fs.unlink(changeFileExt(path, '.cfr', '_desugared.choco'), function (err) {    //delete _desugared.choco
-			if (err) throw err;
-			console.log("successfully deleted " + changeFileExt(path, '.cfr', '_desugared.choco'));
+	if (fs.existsSync(path)){
+		fs.unlink(path, function (err) {   //delete .cfr
+  			if (err) throw err;
+ 			console.log("successfully deleted " + path);
 		});
 	}
+	if (ending == ".cfr"){   //just added this because I realized people could kill the server with a bad file
+		deleteOld(path, ".xml");
+		deleteOld(path, "_desugared.cfr");
+		deleteOld(path, "_desugared.xml");
+		deleteOld(path, "_desugared.als");
+		deleteOld(path, "_desugared.choco");
+	}
 //done cleanup
+}
+
+function deleteOld(path, ext){
+	if (fs.existsSync(changeFileExt(path, '.cfr', ext))){
+		fs.unlink(changeFileExt(path, '.cfr', ext), function (err) {   //delete .xml
+			if (err) throw err;
+ 			console.log("successfully deleted " + changeFileExt(path, '.cfr', ext));
+		});
+	}
 }
 //&end [cleanOldFiles] 
 function escapeHtml(unsafe) {
