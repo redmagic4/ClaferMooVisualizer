@@ -24,6 +24,7 @@ ClaferMooVisualizer
 				subsetByProducts
 				subsetByFeatures
 				makeAggregatedFeature
+				getMissingProductsInCommonData
 		instanceProcessor	
 		claferProcessor
 		icons
