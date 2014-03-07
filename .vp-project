@@ -4,12 +4,14 @@ ClaferMooVisualizer
 			ClaferMoo
     client
 		jquery
-        views
-			ParetoFrontVisualizer
+        views			
+			featureAndQualityMatrix
+			bubbleFrontGraph
+			objectives	
+		ParetoFrontVisualizer
 				scatter
-			ComparisonTable
-		instanceProcessor
-		XMLProcessor
+		instanceProcessor	
+		claferProcessor
 		icons
 	processManagement
 	multipart

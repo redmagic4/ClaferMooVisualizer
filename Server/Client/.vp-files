@@ -1,10 +1,14 @@
-instance_processor.js
+instance_processor.js instance_converter.js
 instanceProcessor
-processor.js
-XMLProcessor
 pfront.js
 ParetoFrontVisualizer
-jquery-1.8.2.js 
-jquery
-jquery.form.js
+md_comparison_table.js
+featureAndQualityMatrix
+md_goals.js
+objectives
+md_graph.js
+bubbleFrontGraph
+clafer_processor.js
+claferProcessor
+jquery-1.8.2.js jquery.form.js
 jquery
