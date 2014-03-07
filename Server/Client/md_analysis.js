@@ -98,7 +98,7 @@ Analysis.method("onSelectionChanged", function(list){
     }
     else
         $("#analysis #unique").html("No Data");
-
+//&begin [removeVariant]
 // add buttons to remove products
     var i;
     var differentProducts = $("#unique #r0").find(".td_instance");
@@ -122,7 +122,7 @@ Analysis.method("onSelectionChanged", function(list){
             $(this).attr("src", "images/remove.png");
         });      
     }
-
+//&end [removeVariant]
 //    alert(missingProducts);
 
         

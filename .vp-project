@@ -12,6 +12,7 @@ ClaferMooVisualizer
 				contentFilter
 			variantComparer
 				setCompletion
+				removeVariant
 			bubbleFrontGraph
 				ParetoFrontVisualizer
 					scatter
