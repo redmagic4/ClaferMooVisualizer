@@ -53,13 +53,13 @@ Input.method("showResponse", function(responseText, statusText, xhr, $form)  {
     this.processToolResult(responseText);    
 	this.endQuery();
 });
-
+//&begin [handleError]
 Input.method("handleError", function(responseText, statusText, xhr, $form)  { 
 	alert(xhr + '\n' + responseText.responseText);
 	this.endQuery();
     this.processToolResult(responseText);    
 });
-
+//&end [handleError]
 Input.method("convertHtmlTags", function(input) {
   var in_tag=false;
   var in_var=false;

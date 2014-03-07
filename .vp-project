@@ -20,6 +20,7 @@ ClaferMooVisualizer
 			console
 			input
 				processToolResult
+				handleError
 			multipleSelection
 			ListVisualizer
 			dataTable
