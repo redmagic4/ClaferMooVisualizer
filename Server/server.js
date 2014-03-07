@@ -81,7 +81,7 @@ server.post('/upload', function(req, res, next) {
 	});
 
 });
- 
+//&begin [cleanOldFiles] 
 function cleanupOldFiles(path) {
 
 	//cleanup old files
@@ -112,7 +112,7 @@ function cleanupOldFiles(path) {
 	});
 //done cleanup
 }
-
+//&end [cleanOldFiles] 
 function escapeHtml(unsafe) {
   return unsafe
       .replace(/&/g, "&amp;")

@@ -2,6 +2,7 @@ ClaferMooVisualizer
     server
         or backends
 			ClaferMoo
+		cleanOldFiles
     client
 		jquery
 		JSClass
