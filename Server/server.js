@@ -79,10 +79,12 @@ server.post('/upload', function(req, res, next) {
 	var file_contents;
 	console.log("proceeding with " + uploadedFilePath);
     // read the contents of the uploaded file
+	//&begin [timeout]
     serverTimeout = setTimeout(function(){
     	res.send ("Serverside Timeout.");
     	return;
     }, 60000);
+    //&end [timeout]
 	fs.readFile(uploadedFilePath, function (err, data) {
         file_contents = data.toString();
 		
@@ -127,7 +129,7 @@ server.post('/upload', function(req, res, next) {
 			else
 				res.writeHead(400, { "Content-Type": "text/html"});
 			res.end(result);
-			clearTimeout(serverTimeout);
+			clearTimeout(serverTimeout);//&line [timeout]
 			cleanupOldFiles(uploadedFilePath);
 
 		});

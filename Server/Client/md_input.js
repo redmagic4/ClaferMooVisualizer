@@ -30,7 +30,7 @@ Input.method("onInitRendered", function()
 
 Input.method("beginQuery", function(formData, jqForm, options) { 
 	var that = this;
-	this.timeout = setTimeout(function(){that.handleTimeout();}, 65000);
+	this.timeout = setTimeout(function(){that.handleTimeout();}, 65000);//&line [timeout]
 	$("#load_area #myform").hide();
 	$("#load_area").append('<div id="preloader"><img id="preloader_img" src="/images/preloader.gif" alt="Loading..."/><span>Loading and processing...</span></div>');	
     return true; 
@@ -52,24 +52,25 @@ Input.method("showRequest", function(formData, jqForm, options) {
  
 // post-submit callback 
 Input.method("showResponse", function(responseText, statusText, xhr, $form)  { 
-    this.clearTimeout(this.timeout);
+    this.clearTimeout(this.timeout);//&line [timeout]
 	this.processToolResult(responseText);    
 	this.endQuery();
 });
 //&begin [handleError]
 Input.method("handleError", function(responseText, statusText, xhr, $form)  { 
-	this.clearTimeout(this.timeout);
+	this.clearTimeout(this.timeout);//&line [timeout]
 	alert(xhr + '\n' + responseText.responseText);
 	this.endQuery();
     this.processToolResult(responseText);    
 });
 //&end [handleError]
+//&begin [timeout]
 Input.method("handleTimeout", function(responseText, statusText, xhr, $form)  { 
 	alert("Request timed out.");
 	this.endQuery();
     this.processToolResult(responseText);    
 });
-
+//&end [timeout]
 Input.method("convertHtmlTags", function(input) {
   var in_tag=false;
   var in_var=false;

@@ -32,4 +32,5 @@ ClaferMooVisualizer
 		claferProcessor
 		icons
 	processManagement
+		timeout
 	multipart
