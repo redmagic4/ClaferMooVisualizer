@@ -10,6 +10,8 @@ md_graph.js
 bubbleFrontGraph
 md_console.js
 console
+md_input.js
+input
 clafer_processor.js
 claferProcessor
 jquery-1.8.2.js jquery.form.js

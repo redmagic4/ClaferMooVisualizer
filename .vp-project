@@ -9,6 +9,8 @@ ClaferMooVisualizer
 			bubbleFrontGraph
 			objectives
 			console
+			input
+				processToolResult
 		ParetoFrontVisualizer
 				scatter
 		instanceProcessor	

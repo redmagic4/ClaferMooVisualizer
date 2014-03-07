@@ -101,7 +101,7 @@ Input.method("convertHtmlTags", function(input) {
 
   return output;
 });
-
+//&begin [processToolResult]
 Input.method("processToolResult", function(result)
 {
 	if (!result) return;
@@ -145,7 +145,7 @@ Input.method("processToolResult", function(result)
 
     this.host.updateData(data);
 });
-
+//&end [processToolResult]
 Input.method("getInitContent", function()
 {
 	return '<div id="load_area"><form id="myform" action="' + this.serverAction + '" method="post" enctype="multipart/form-data">' + '<input type="file" name="upload-file">'+ '<input type="submit" value="Upload">'+'</form></div>';  
