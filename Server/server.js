@@ -20,7 +20,7 @@ var server = express();
 
 server.use(express.static(__dirname + '/Client'));
 server.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + '/uploads' }));
-
+//&begin [urlUploading]
 server.get('/', function(req, res) {
 //uploads now and runs once app.html is fully loaded
 //works because client currently sends one empty post upon completion of loading
@@ -40,7 +40,7 @@ server.get('/', function(req, res) {
 	}
     res.sendfile("Client/app.html");
 });
-
+//&end [urlUploading]
 
 /*
  * Handle file upload

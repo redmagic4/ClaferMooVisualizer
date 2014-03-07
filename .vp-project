@@ -3,6 +3,7 @@ ClaferMooVisualizer
         or backends
 			ClaferMoo
 		cleanOldFiles
+		urlUploading
     client
 		jquery
 		JSClass
