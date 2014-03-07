@@ -12,6 +12,8 @@ md_console.js
 console
 md_input.js
 input
+md_usecases.js
+useCases
 ptable.js data.js
 dataTable
 selector.js

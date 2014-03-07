@@ -10,7 +10,7 @@ ClaferMooVisualizer
 			bubbleFrontGraph
 				ParetoFrontVisualizer
 					scatter
-				
+			useCases	
 			objectives
 			console
 			input
