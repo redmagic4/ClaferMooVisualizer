@@ -8,7 +8,8 @@ ClaferMooVisualizer
 		jquery
 		JSClass
         views			
-			featureAndQualityMatrix				
+			featureAndQualityMatrix
+				contentFilter
 			variantComparer
 				setCompletion
 			bubbleFrontGraph

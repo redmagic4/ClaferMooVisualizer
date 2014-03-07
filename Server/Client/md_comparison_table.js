@@ -68,7 +68,7 @@ ComparisonTable.method("onRendered", function()
     }
 
 });
-
+//&begin [contentFilter]
 ComparisonTable.method("filterContent", function(){
     this.unFilter();
     console.log("filter called");
@@ -116,7 +116,7 @@ ComparisonTable.method("unFilter", function(){
         $(this.hidden.pop()).show();
     }
 });
-
+//&end [contentFilter]
 ComparisonTable.method("getContent", function()
 {
     return this.content;
