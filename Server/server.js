@@ -101,9 +101,12 @@ server.post('/upload', function(req, res, next) {
 		tool.on('exit', function (code) 
 		{
 			var result = "";
-			console.log("Parsing alloy solution");
+			console.log("Preparing to send result");
+			if(error_result.indexOf('Exception in thread "main"') > -1){
+				code = 1;
+			}
 			if (code === 0) 
-			{
+			{				
 				result = "Return code = " + code + "\n" + data_result + "=====";
 				var xml = fs.readFileSync(changeFileExt(uploadedFilePath, '.cfr', '_desugared.xml'));
 				result += xml.toString();
@@ -115,7 +118,10 @@ server.post('/upload', function(req, res, next) {
 			{
 				result = 'Error, return code: ' + code + '\n' + error_result;
 			}
-			res.writeHead(200, { "Content-Type": "text/html"});
+			if (code === 0)
+				res.writeHead(200, { "Content-Type": "text/html"});
+			else
+				res.writeHead(400, { "Content-Type": "text/html"});
 			res.end(result);
 			cleanupOldFiles(uploadedFilePath);
 
