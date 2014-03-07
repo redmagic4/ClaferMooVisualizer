@@ -29,7 +29,7 @@ Input.method("onInitRendered", function()
 
 Input.method("beginQuery", function(formData, jqForm, options) { 
 	$("#load_area #myform").hide();
-	$("#load_area").append('<div id="preloader"><img id="preloader_img" src="/Client/images/preloader.gif" alt="Loading..."/><span>Loading and processing...</span></div>');	
+	$("#load_area").append('<div id="preloader"><img id="preloader_img" src="/images/preloader.gif" alt="Loading..."/><span>Loading and processing...</span></div>');	
     return true; 
 });
  
@@ -104,7 +104,7 @@ Input.method("convertHtmlTags", function(input) {
 //&begin [processToolResult]
 Input.method("processToolResult", function(result)
 {
-	if (!result) return;
+	if (!result) return;	
 	
 	var ar = result.split("=====");
 	if (ar.length != 3)
@@ -148,5 +148,5 @@ Input.method("processToolResult", function(result)
 //&end [processToolResult]
 Input.method("getInitContent", function()
 {
-	return '<div id="load_area"><form id="myform" action="' + this.serverAction + '" method="post" enctype="multipart/form-data">' + '<input type="file" name="upload-file">'+ '<input type="submit" value="Upload">'+'</form></div>';  
+	return '<div id="load_area"><form id="myform" action="' + this.serverAction + '" method="post" enctype="multipart/form-data">' + '<input type="file" name="claferFile">'+ '<input type="submit" value="Upload">'+'</form></div>';  
 });
