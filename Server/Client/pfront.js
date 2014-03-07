@@ -160,7 +160,7 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
     });
 */
 }
-
+//&begin [multipleSelection]
 function pointClick()
 {
     var pid = this.firstChild.nodeValue;
@@ -197,7 +197,7 @@ function deselectObject(o)
 //deselectObject(this);
 
 //$('#toggle_link').click(this.toggleDistinct.bind(this));
-
+//&end [multipleSelection]
 /* SCATTER */
 //&begin [scatter]
 function ParetoFrontVisualizerScatter (element) 

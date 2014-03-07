@@ -6,13 +6,16 @@ ClaferMooVisualizer
 		jquery
         views			
 			featureAndQualityMatrix
+				dataTable
 			bubbleFrontGraph
+				ParetoFrontVisualizer
+					scatter
+				
 			objectives
 			console
 			input
 				processToolResult
-		ParetoFrontVisualizer
-				scatter
+			multipleSelection
 		instanceProcessor	
 		claferProcessor
 		icons

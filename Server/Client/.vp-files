@@ -12,6 +12,10 @@ md_console.js
 console
 md_input.js
 input
+ptable.js data.js
+dataTable
+selector.js
+multipleSelection
 clafer_processor.js
 claferProcessor
 jquery-1.8.2.js jquery.form.js
