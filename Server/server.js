@@ -52,7 +52,7 @@ server.post('/upload', function(req, res, next) {
    				} else if (URLs[x].session === req.sessionID && ("claferFileURL=" + URLs[x].url) === url.parse(req.body.claferFileURL).query){
    					var i = 0;
    					var uploadedFilePath = req.sessionID;
-   					uploadedFilePath = uploadedFilePath.replace("/", "");
+   					uploadedFilePath = uploadedFilePath.replace(/\\/g, "").replace('/', "");
    					uploadedFilePath = "./uploads/" + uploadedFilePath;
    					while(fs.existsSync(uploadedFilePath + i.toString() + ".cfr")){
    						i = i+1;
@@ -80,11 +80,11 @@ server.post('/upload', function(req, res, next) {
 	console.log("proceeding with " + uploadedFilePath);
     // read the contents of the uploaded file
 	//&begin [timeout]
-    serverTimeout = setTimeout(function(){
-    	res.send ("Serverside Timeout.");
-    	return;
-    }, 60000);
-    //&end [timeout]
+    //serverTimeout = setTimeout(function(){
+    //	res.send ("Serverside Timeout.");
+    //	return;
+    //}, 60000);
+	//&end [timeout]
 	fs.readFile(uploadedFilePath, function (err, data) {
         file_contents = data.toString();
 		
@@ -129,7 +129,7 @@ server.post('/upload', function(req, res, next) {
 			else
 				res.writeHead(400, { "Content-Type": "text/html"});
 			res.end(result);
-			clearTimeout(serverTimeout);//&line [timeout]
+//			clearTimeout(serverTimeout); //&line [timeout]
 			cleanupOldFiles(uploadedFilePath);
 
 		});
