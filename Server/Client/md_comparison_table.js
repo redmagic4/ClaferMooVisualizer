@@ -520,7 +520,7 @@ ComparisonTable.method("makePointsSelected", function (pid){;
 ComparisonTable.method("makePointsDeselected", function (pid){
     $("#mdComparisonTable #th0_" + pid.substring(1)).css("color", "black");
 });
-
+//&begin [searchBar]
 ComparisonTable.method("scrollToSearch", function (input){
     if (input == ""){
         $('#mdComparisonTable .window-content').scrollTop(0);
@@ -547,7 +547,7 @@ ComparisonTable.method("scrollToSearch", function (input){
         firstPass = false;
     }
 });
-
+//&end [searchBar]
 ComparisonTable.method("getInitContent", function()
 {
 	return '';	   

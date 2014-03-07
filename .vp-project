@@ -12,6 +12,7 @@ ClaferMooVisualizer
 				contentFilter
 					filteringByFeatures
 					filterringByGoals
+				searchBar
 			variantComparer
 				setCompletion
 				removeVariant
