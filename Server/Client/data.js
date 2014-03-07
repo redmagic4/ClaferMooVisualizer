@@ -7,7 +7,7 @@ function DataTable ()
     this.title = "";                 // instance super clafer
 
 }
-
+//&begin [subsetByProducts]
 DataTable.method("subsetByProducts", function(arrayProducts)
 {
     var result = new DataTable();
@@ -83,7 +83,8 @@ DataTable.method("subsetByProducts", function(arrayProducts)
     
     return result;
 });
-
+//&end [subsetByProducts]
+//&begin [subsetByFeatures]
 DataTable.method("subsetByFeatures", function(arrayFeatures)
 {
     var result = new DataTable();
@@ -156,12 +157,13 @@ DataTable.method("subsetByFeatures", function(arrayFeatures)
     return result;
 
 });
-
+//&end [subsetByFeatures]
+//&begin [makeAggregatedFeature]
 DataTable.method("makeAggregatedFeature", function(s)
 {
     return s + " (mean)";
 });
-
+//&end [makeAggregatedFeature]
 
 DataTable.method("getCommon", function(needAggregate)
 {

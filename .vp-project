@@ -8,6 +8,9 @@ ClaferMooVisualizer
         views			
 			featureAndQualityMatrix
 				dataTable
+					subsetByProducts
+					subsetByFeatures
+					makeAggregatedFeature
 			variantComparer	
 			bubbleFrontGraph
 				ParetoFrontVisualizer
