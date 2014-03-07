@@ -1,6 +1,8 @@
-*.project
+*.sublime-project
+*.sublime-workspace
 *.zip
 *.pyc
+*.project
 */node_modules/*
 
 lib-cov
