@@ -6,12 +6,9 @@ ClaferMooVisualizer
 		jquery
 		JSClass
         views			
-			featureAndQualityMatrix
-				dataTable
-					subsetByProducts
-					subsetByFeatures
-					makeAggregatedFeature
-			variantComparer	
+			featureAndQualityMatrix				
+			variantComparer
+				setCompletion
 			bubbleFrontGraph
 				ParetoFrontVisualizer
 					scatter
@@ -23,6 +20,10 @@ ClaferMooVisualizer
 				processToolResult
 			multipleSelection
 			ListVisualizer
+			dataTable
+				subsetByProducts
+				subsetByFeatures
+				makeAggregatedFeature
 		instanceProcessor	
 		claferProcessor
 		icons

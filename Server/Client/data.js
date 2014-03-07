@@ -225,7 +225,7 @@ DataTable.method("getCommon", function(needAggregate)
 
     return result;
 });
-
+//&begin [getMissingProductsInCommonData]
 DataTable.method("getMissingProductsInCommonData", function(commonData, productList)
 {
     var commonProducts = new Array();
@@ -273,7 +273,7 @@ DataTable.method("getMissingProductsInCommonData", function(commonData, productL
     
     return result;
 });
-
+//&end [getMissingProductsInCommonData]
 DataTable.method("toSetOfFeatures", function()
 {
     var result = new JS.Set(this.features);

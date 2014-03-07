@@ -56,7 +56,7 @@ Analysis.method("onSelectionChanged", function(list){
     var differentData = data.subsetByFeatures(differentFeatures.toArray()); // ALL DIFFERENT DATA
     differentData.title = "Differences";
 
-    
+    //&begin [setCompletion]
     // get the products that are missing to make up the complete set.
     var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), list);
   
@@ -82,7 +82,7 @@ Analysis.method("onSelectionChanged", function(list){
         label = "Please select more products for analysis";
 
     $("#analysis #completeness").html(label);
-    
+    //&end [setCompletion]
 //    commonData.products[0] = label;
     
     if (commonFeatures.length > 0)
