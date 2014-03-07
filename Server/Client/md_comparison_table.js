@@ -176,7 +176,7 @@ ComparisonTable.method("filterContent", function(){
     row = $("#mdComparisonTable #r" + i);
     row_length = row.find(".td_instance").length;
     while (row.length != 0){
-
+    	//&begin [filteringByFeatures]
         //filtering by features
         if (!row.find(".numeric").length){
             var filter = $("#mdComparisonTable #r" + i + "box").attr("Class"); //pull filter type from checkbox
@@ -190,7 +190,8 @@ ComparisonTable.method("filterContent", function(){
                 }
             }
         }
-
+      //&end [filteringByFeatures]
+      //&begin [filteringByGoals]
         //filtering by goals
         else{
             var filter;
@@ -214,7 +215,7 @@ ComparisonTable.method("filterContent", function(){
                     this.hideInstance(x);
             }
         }
-
+      //&end [filteringByGoals]
         //increment row
         i++;
         row = $("#mdComparisonTable #r" + i);
@@ -222,7 +223,6 @@ ComparisonTable.method("filterContent", function(){
 
 
 });
-
 ComparisonTable.method("hideInstance", function(x){
 
 // Get graph bubble html locations
@@ -259,7 +259,6 @@ ComparisonTable.method("hideInstance", function(x){
         row_with_removal = $("#mdComparisonTable #r" + y);
     }
 });
-
 //unhides everything in the hidden stack (all things that have been filtered out)
 ComparisonTable.method("unFilter", function(){
     while(this.hidden.length){

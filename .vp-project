@@ -10,6 +10,8 @@ ClaferMooVisualizer
         views			
 			featureAndQualityMatrix
 				contentFilter
+					filteringByFeatures
+					filterringByGoals
 			variantComparer
 				setCompletion
 				removeVariant
