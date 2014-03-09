@@ -102,7 +102,7 @@ server.post('/upload', function(req, res, next) {
 	//&end [timeout]
 	fs.readFile(uploadedFilePath, function (err, data) {
     file_contents = data.toString();
-		if (req.files.claferFile.path.substring(req.files.claferFile.path.length - 5) == ".data"){
+		if (uploadedFilePath.substring(uploadedFilePath.length - 5) == ".data"){
 			res.writeHead(200, { "Content-Type": "text/html"});
 			res.end(file_contents);
 			cleanupOldFiles(uploadedFilePath, dlDir);
@@ -149,8 +149,8 @@ server.post('/upload', function(req, res, next) {
 			else
 				res.writeHead(400, { "Content-Type": "text/html"});
 			res.end(result);
-//			clearTimeout(serverTimeout);	//&line [timeout]
-//			cleanupOldFiles(uploadedFilePath, dlDir);
+//			clearTimeout(serverTimeout);//&line [timeout]
+			cleanupOldFiles(uploadedFilePath, dlDir);
 		});
 		
 	});
