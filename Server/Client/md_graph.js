@@ -194,11 +194,12 @@ Graph.method("makePointsNew", function(){
     this.addIds();
 
 // Get graph bubble html locations
+  //&begin [handleOptimalAndExistingInst]
     originalCirclePairs = [];
     for (var i=1; i<=this.host.findModule("mdInput").originalPoints; i++){
         originalCirclePairs.push({circle: $("#P" + i + "c"), text_data: $("#P" + i + "t"), ident: i});
     }
-
+  //&end [handleOptimalAndExistingInst]
     var circle_pairs = [];
     for (var i=(this.host.findModule("mdInput").originalPoints + 1); i<=$("#chart circle").length; i++){
         circle_pairs.push({circle: $("#P" + i + "c"), text_data: $("#P" + i + "t"), ident: i});
@@ -220,6 +221,7 @@ Graph.method("makePointsNew", function(){
                     break;
                 }
         }
+        //&begin [handleOptimalAndExistingInst]
         if (isOptimal){
             var shape = this.getSVGHexagon(xpos, ypos, r);
             var newID = "P" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "h " + $(originalCirclePairs[i].circle).attr("id");
@@ -231,6 +233,7 @@ Graph.method("makePointsNew", function(){
             var shape = this.getSVGSquare(xpos, ypos, r)
             shape.setAttributeNS(null, "id", "P" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "s");
         }
+      //&end [handleOptimalAndExistingInst]
         shape.setAttributeNS(null, "id",id);
         shape.setAttributeNS(null, "stroke","#000000");
         shape.setAttributeNS(null, "stroke-width","1");
@@ -241,8 +244,8 @@ Graph.method("makePointsNew", function(){
         $(circlePair.circle).attr("stroke-width","0");
     }
     host.findModule("mdComparisonTable").filterContent();
+    
 });
-
 Graph.method("getSVGHexagon", function(x, y, r){
     var NS="http://www.w3.org/2000/svg";
     var hex= document.createElementNS(NS,"polygon");

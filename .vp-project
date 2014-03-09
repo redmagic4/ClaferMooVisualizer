@@ -19,7 +19,8 @@ ClaferMooVisualizer
 			bubbleFrontGraph
 				ParetoFrontVisualizer
 					scatter
-				graphResizing	
+				graphResizing
+				handleOptimalAndExistingInst
 			useCases	
 			objectives
 			console
