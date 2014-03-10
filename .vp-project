@@ -13,7 +13,9 @@ ClaferMooVisualizer
 					filteringByFeatures
 					filterringByGoals
 				searchBar
-				sortingByQuality
+				sorting
+					sortingByQuality
+					sortingByID
 			variantComparer
 				setCompletion
 				removeVariant
