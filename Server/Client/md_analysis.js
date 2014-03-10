@@ -180,8 +180,8 @@ Analysis.method("onSelectionChanged", function(list){
     }
 //&end [removeVariant]
 //    alert(missingProducts);
-
-        
+    this.addHover();
+    
 });
 
 Analysis.method("addShapes", function(){
@@ -212,3 +212,61 @@ Analysis.method("saveSelected", function(){
     $("#SaveForm").submit();
 });
 //&end [saveInstances]
+Analysis.method("addHover", function(){
+    that = this;
+    this.interval = null;
+    this.timeout = null;
+    $("#unique #r0 .td_instance").hover( 
+        function () {
+        $(this).css("background", "#ffffcc");
+        var instance = $(this).find(".svghead :last-child").text();
+
+        //get crosshairs 
+        var hairs = that.host.findModule("mdComparisonTable").getCrosshairs($("#V" + instance + "c").attr("cx"), $("#V" + instance + "c").attr("cy"));
+        $("#V" + instance + "c").before(hairs);
+        $("#CHX").attr("class", instance + "HL");
+        $("#CHY").attr("class", instance + "HL");
+
+        var highlight = $("#V" + instance + "c").clone();
+        highlight = that.host.findModule("mdComparisonTable").highlight(highlight);
+        $(highlight).removeAttr("id");
+        $(highlight).attr("class", instance + "HL");
+        //add highlight element behind circle
+        $("#V" + instance + "c").before(highlight);
+
+        var highlight = $("#V" + instance + "r").clone();
+        highlight = that.host.findModule("mdComparisonTable").highlight(highlight);
+        $(highlight).removeAttr("id");
+        $(highlight).attr("class", instance + "HL");
+        //add highlight element behind circle
+        $("#V" + instance + "r").before(highlight);
+
+        var highlight = $("#V" + instance + "h").clone();
+        highlight = that.host.findModule("mdComparisonTable").highlight(highlight);
+        $(highlight).removeAttr("id");
+        $(highlight).attr("class", instance + "HL");
+        //add highlight element behind circle
+        $("#V" + instance + "h").before(highlight);
+
+        var myBool = true;
+        that.timeout = setTimeout(function(){
+            that.interval = setInterval(function(){
+                if (myBool){
+                    $("." + instance + "HL").hide(500);
+                    myBool = false;
+                } else {
+                    $("." + instance + "HL").show(500);
+                    myBool = true;
+                }
+            }, 500);
+        }, 1500);
+    }, 
+
+    function () {
+        $(this).css("background", "");
+        var instance = $(this).find(".svghead :last-child").text();
+        $("." + instance + "HL").remove();
+        clearInterval(that.interval);
+        clearTimeout(that.timeout);
+    });
+});

@@ -549,6 +549,8 @@ ComparisonTable.method("toggleDistinct", function()
 ComparisonTable.method("addHovering", function()
 {	
     var that = this;
+    this.interval = null;
+    this.timeout = null;
 	$("#comparison #tBody tr").hover(
 	  function () {
 		$('#comparison table tr:gt(0)').css("color", this.fadeColor);
@@ -570,16 +572,53 @@ ComparisonTable.method("addHovering", function()
       function () {
         $(this).css("background", "#ffffcc");
         var instance = $(this).attr("id").substring(4);
-        var highlight = $("#V" + instance + "c").clone()
+
+        //get crosshairs 
+        var hairs = that.getCrosshairs($("#V" + instance + "c").attr("cx"), $("#V" + instance + "c").attr("cy"));
+        $("#V" + instance + "c").before(hairs);
+        $("#CHX").attr("class", instance + "HL");
+        $("#CHY").attr("class", instance + "HL");
+
+        var highlight = $("#V" + instance + "c").clone();
         highlight = that.highlight(highlight);
-        $(highlight).attr("id", instance + "HL");
+        $(highlight).removeAttr("id");
+        $(highlight).attr("class", instance + "HL");
         //add highlight element behind circle
         $("#V" + instance + "c").before(highlight);
+
+        var highlight = $("#V" + instance + "r").clone();
+        highlight = that.highlight(highlight);
+        $(highlight).removeAttr("id");
+        $(highlight).attr("class", instance + "HL");
+        //add highlight element behind circle
+        $("#V" + instance + "r").before(highlight);
+
+        var highlight = $("#V" + instance + "h").clone();
+        highlight = that.highlight(highlight);
+        $(highlight).removeAttr("id");
+        $(highlight).attr("class", instance + "HL");
+        //add highlight element behind circle
+        $("#V" + instance + "h").before(highlight);
+
+        var myBool = true;
+        that.timeout = setTimeout(function(){
+            that.interval = setInterval(function(){
+                if (myBool){
+                    $("." + instance + "HL").hide(500);
+                    myBool = false;
+                } else {
+                    $("." + instance + "HL").show(500);
+                    myBool = true;
+                }
+            }, 500);
+        }, 1500);
       }, 
       function () {
         $(this).css("background", "");
         var instance = $(this).attr("id").substring(4);
-        $("#" + instance + "HL").remove();
+        $("." + instance + "HL").remove();
+        that.interval = clearInterval(that.interval);
+        that.timeout = clearTimeout(that.timeout);
       }
     );
 
@@ -719,7 +758,7 @@ ComparisonTable.method("addShapes", function(){
             var thisCircle = $("#V" + text + "c").clone();
             $(thisCircle).removeAttr("id");
             //if it's ever needed to swich back to colored versions remove this line
-            $(thisCircle).css("fill", "#3366cc");
+            $(thisCircle).css("fill", "white");
             $(thisCircle).attr("cx", "11px");
             $(thisCircle).attr("cy", "11px");
             $(thisCircle).attr("r", "10px");
@@ -731,7 +770,7 @@ ComparisonTable.method("addShapes", function(){
             var thisRect = $(this).find("rect");
             $(thisRect).removeAttr("id");
             //if it's ever needed to swich back to colored versions remove this line
-            $(thisRect).css("fill", "#3366cc");
+            $(thisRect).css("fill", "white");
             $(thisRect).attr("x", "1px");
             $(thisRect).attr("y", "1px");
             $(thisRect).attr("width", "20px");
@@ -741,7 +780,7 @@ ComparisonTable.method("addShapes", function(){
             console.log(that);
             var thisHex = that.host.findModule("mdGraph").getSVGHexagon(10, 11, 10);
             //if it's ever needed to swich back to colored versions "#3366cc" to fill
-            $(thisHex).css("fill", "#3366cc");
+            $(thisHex).css("fill", "white");
             $(thisHex).attr("stroke-width", "1");
             $(thisHex).attr("stroke", "#000000");
             $(thisHex).prependTo($(this).find(".svghead"));
@@ -752,8 +791,33 @@ ComparisonTable.method("addShapes", function(){
 
 ComparisonTable.method("highlight", function(obj){
     $(obj).attr("filter", "url(#blur)");
-    $(obj).attr("stroke-width", "3");
+    $(obj).attr("stroke-width", "6");
+    $(obj).attr("stroke", "yellow");
     return obj;
+});
+
+ComparisonTable.method("getCrosshairs", function(x, y){
+    var NS="http://www.w3.org/2000/svg";
+    var crossX = document.createElementNS(NS,"line");
+    crossX.setAttribute("x1", "0");
+    crossX.setAttribute("x2", "1000");
+    crossX.setAttribute("y1", y);
+    crossX.setAttribute("y2", y);
+    crossX.setAttribute("id", "CHX")
+    //crossX.setAttribute("filter", "url(#blur)");
+    crossX.setAttribute("stroke", "yellow");
+    crossX.setAttribute("stroke-width", "2");
+
+    var crossY = document.createElementNS(NS,"line");
+    crossY.setAttribute("y1", "0");
+    crossY.setAttribute("y2", "1000");
+    crossY.setAttribute("x1", x);
+    crossY.setAttribute("x2", x);
+    crossY.setAttribute("id", "CHY")
+    crossY.setAttribute("stroke", "yellow");
+    crossY.setAttribute("stroke-width", "2");
+
+    return [crossX, crossY];
 });
 
 ComparisonTable.method("getInitContent", function()
