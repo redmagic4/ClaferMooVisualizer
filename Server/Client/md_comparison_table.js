@@ -271,7 +271,7 @@ ComparisonTable.method("filterContent", function(){
         //filtering by goals
         else {
             var filter;
-            var filterName = $("#mdComparisonTable #r" + i + " .td_abstract").text().replace(/\s+/g, '');
+            var filterName = $("#mdComparisonTable #r" + i + " .td_abstract").text().replace(/\s+/g, '').replace(/[\u25B6\u25C0]/g, "");
             for (var x = 0; x<=this.host.findModule("mdGoals").ranges.length; x++){;
                 if (x == this.host.findModule("mdGoals").ranges.length){
                     break;
@@ -635,15 +635,19 @@ ComparisonTable.method("makePointsDeselected", function (pid){
 });
 //&begin [searchBar]
 ComparisonTable.method("scrollToSearch", function (input){
-
+    //doesn't actually scroll... hides rows not containing input.
+    var searchStrings = input.split(/[,\s]{1,}/g);
     var iteratedRow = 0;
     while (iteratedRow <= $("#comparison #tBody tbody").children().length){
-        if ($("#comparison #tBody #r" + iteratedRow).text().toLowerCase().indexOf(input.toLowerCase()) === -1){
-            $("#comparison #tBody #r" + iteratedRow).hide();
-
-        } else {
-            $("#comparison #tBody #r" + iteratedRow).show();
+        var found = false;
+        for (var i = 0; i<searchStrings.length; i++){
+            if ($("#comparison #tBody #r" + iteratedRow).text().toLowerCase().indexOf(searchStrings[i].toLowerCase()) != -1)
+                found = true;
         }
+        if (found)
+            $("#comparison #tBody #r" + iteratedRow).show();
+        else
+            $("#comparison #tBody #r" + iteratedRow).hide();
         iteratedRow++;
     }
     $('#mdComparisonTable .window-content').scroll();
