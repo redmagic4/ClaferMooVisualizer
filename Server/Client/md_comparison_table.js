@@ -703,7 +703,7 @@ ComparisonTable.method("addShapes", function(){
 
     });
 });
-
+//&begin [hottracking]
 //sets a shape to be rendered as a highlight
 ComparisonTable.method("highlight", function(obj){
     $(obj).attr("filter", "url(#blur)");
@@ -711,7 +711,7 @@ ComparisonTable.method("highlight", function(obj){
     $(obj).attr("stroke", "yellow");
     return obj;
 });
-
+//&end [hottracking]
 //returns crosshairs for the graph that intersect at coordinates (x,y)
 ComparisonTable.method("getCrosshairs", function(x, y){
     var NS="http://www.w3.org/2000/svg";
