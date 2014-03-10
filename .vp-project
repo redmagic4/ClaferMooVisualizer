@@ -37,6 +37,7 @@ ClaferMooVisualizer
 				getMissingProductsInCommonData
 		instanceProcessor	
 		claferProcessor
+		claferIGInstanceParser
 		icons
 	processManagement
 		timeout
