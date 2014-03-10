@@ -545,7 +545,7 @@ ComparisonTable.method("toggleDistinct", function()
     return true;
 });
 
-
+//&begin [hottracking]
 ComparisonTable.method("addHovering", function()
 {	
     var that = this;
@@ -584,7 +584,7 @@ ComparisonTable.method("addHovering", function()
     );
 
 });
-
+//&end [hottracking]
 //makes instance red on graph, for actual selection function see onSelected(pid) in selector.js
 ComparisonTable.method("makePointsSelected", function (pid){;
     $("#mdComparisonTable #th0_" + pid.substring(1)).find("text").css("fill", "Red");
