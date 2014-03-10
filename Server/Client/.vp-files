@@ -2,6 +2,8 @@ instance_processor.js instance_converter.js
 instanceProcessor
 Instance_parser
 claferIGInstanceParser
+instance_filter.js
+contentFilter
 pfront.js
 ParetoFrontVisualizer
 md_comparison_table.js
