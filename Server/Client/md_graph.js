@@ -183,8 +183,8 @@ Graph.method("addIds", function(){
 
 
     for(i=0; i<circle_pairs.length; i++){
-        $(circle_pairs[i].circle).attr("id", "P" + (i+1) + "c");
-        $(circle_pairs[i].text_data).attr("id", "P" + (i+1) + "t");
+        $(circle_pairs[i].circle).attr("id", "V" + (i+1) + "c");
+        $(circle_pairs[i].text_data).attr("id", "V" + (i+1) + "t");
     }
 
 });
@@ -197,12 +197,12 @@ Graph.method("makePointsNew", function(){
   //&begin [handleOptimalAndExistingInst]
     originalCirclePairs = [];
     for (var i=1; i<=this.host.findModule("mdInput").originalPoints; i++){
-        originalCirclePairs.push({circle: $("#P" + i + "c"), text_data: $("#P" + i + "t"), ident: i});
+        originalCirclePairs.push({circle: $("#V" + i + "c"), text_data: $("#V" + i + "t"), ident: i});
     }
   //&end [handleOptimalAndExistingInst]
     var circle_pairs = [];
     for (var i=(this.host.findModule("mdInput").originalPoints + 1); i<=$("#chart circle").length; i++){
-        circle_pairs.push({circle: $("#P" + i + "c"), text_data: $("#P" + i + "t"), ident: i});
+        circle_pairs.push({circle: $("#V" + i + "c"), text_data: $("#V" + i + "t"), ident: i});
     }
     //hide table header (row 0)
     while (circle_pairs.length != 0){
@@ -211,7 +211,7 @@ Graph.method("makePointsNew", function(){
         var xpos = $(circlePair.circle).attr("cx");
         var ypos = $(circlePair.circle).attr("cy");
         var fill = $(circlePair.circle).attr("fill");
-        var id = "P" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "r"
+        var id = "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "r"
         var NS="http://www.w3.org/2000/svg";
         var isOptimal = false;
         for (i=0; i<originalCirclePairs.length; i++){
@@ -224,14 +224,14 @@ Graph.method("makePointsNew", function(){
         //&begin [handleOptimalAndExistingInst]
         if (isOptimal){
             var shape = this.getSVGHexagon(xpos, ypos, r);
-            var newID = "P" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "h " + $(originalCirclePairs[i].circle).attr("id");
+            var newID = "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "h " + $(originalCirclePairs[i].circle).attr("id");
             shape.setAttributeNS(null, "id", newID);
             $(originalCirclePairs[i].circle).hide();
             $(originalCirclePairs[i].text_data).hide();
-            host.findModule("mdComparisonTable").permaHidden["P"+(i+1)] = true;
+            host.findModule("mdComparisonTable").permaHidden["V"+(i+1)] = true;
         } else {
             var shape = this.getSVGSquare(xpos, ypos, r)
-            shape.setAttributeNS(null, "id", "P" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "s");
+            shape.setAttributeNS(null, "id", "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "s");
         }
       //&end [handleOptimalAndExistingInst]
         shape.setAttributeNS(null, "id",id);

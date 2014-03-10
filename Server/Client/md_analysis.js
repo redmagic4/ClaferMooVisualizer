@@ -58,7 +58,15 @@ Analysis.method("onSelectionChanged", function(list){
     //&begin [setCompletion]
     // get the products that are missing to make up the complete set.
     var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), list);
-  
+    var permaHidden = this.host.findModule("mdComparisonTable").permaHidden;
+
+    if (missingProducts){
+        for (var i = 0; i < missingProducts.length; i++){
+            if (permaHidden.hasOwnProperty(missingProducts[i]))
+                missingProducts.splice(i, 1);
+        }
+    }
+
     var clearButton = '<button id="clearAnalysis">Clear</button> ';
     var label = clearButton;
     
@@ -86,7 +94,7 @@ Analysis.method("onSelectionChanged", function(list){
     else
         label += "Please select more products for analysis";
 
-    var saveButton = '<form id="SaveForm" action="/" method="post" enctype="multipart/form-data">' + '<input type="button" id="saveSelected" value="Save Selected">' + '<input type="hidden" name="data" id="saveData" value="">' + '</form>';
+    var saveButton = ' <input type="button" id="saveSelected" value="Save Selected">' + '<form id="SaveForm" action="/" method="post" enctype="multipart/form-data">' + '<input type="hidden" name="data" id="saveData" value="">' + '</form>';
     label += saveButton;
 
     $("#analysis #completeness").html(label);
