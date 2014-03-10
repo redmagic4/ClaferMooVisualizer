@@ -265,7 +265,7 @@ Graph.method("getSVGSquare", function(cx, cy, r){
     rect.setAttributeNS(null, "y",cy-r);
     return rect;
 });
-
+//&begin [handleOptimalAndExistingInst]
 // if instance is optimal, returns identical optimal instance id, else returns -1
 Graph.method("isOptimal", function(id)
 {
@@ -297,6 +297,7 @@ Graph.method("isOptimal", function(id)
     }
     return -1;
 });
+//&end [handleOptimalAndExistingInst]
 //&begin [multipleSelection]
 Graph.method("selectObject", function(o)
 {
