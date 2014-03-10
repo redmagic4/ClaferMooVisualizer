@@ -155,6 +155,7 @@ ComparisonTable.method("onRendered", function()
             }).css("cursor", "pointer");
         }
 //  Add sorting to quality attributes
+        //&begin [sortingByQuality]
         else {
             $("#r" + i + " .td_abstract").append('<div id=sortText style="display:inline"></div>');
             $("#r" + i + " .td_abstract").addClass('noSort');
@@ -176,7 +177,7 @@ ComparisonTable.method("onRendered", function()
         i++;
         row = $("#r" + i);
     }
-
+  //&end [sortingByQuality]
 // Selection of instances for analysis from top row of table
     var length = $("#r0").find(".td_instance").length;
 //    console.log(length);
@@ -585,6 +586,7 @@ ComparisonTable.method("scrollToSearch", function (input){
 
 });
 //&end [searchBar]
+//&begin [sortingByQuality]
 ComparisonTable.method("rowSort", function(rowText){
     var i=0;
     var row = $("#comparison #r" + i);
@@ -641,7 +643,7 @@ ComparisonTable.method("rowSort", function(rowText){
         row = $("#comparison #r" + i);
     }
 });
-
+//&end [sortingByQuality]
 ComparisonTable.method("getInitContent", function()
 {
 	return '';	   
