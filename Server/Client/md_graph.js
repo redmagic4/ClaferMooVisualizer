@@ -1,3 +1,24 @@
+/*
+Copyright (C) 2012, 2013 Neil Redman, Alexander Murashkin <http://gsd.uwaterloo.ca>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 function Graph(host)
 {
     this.id = "mdGraph";
@@ -223,7 +244,7 @@ Graph.method("makePointsReady", function(){
         var fill = $(circlePair.circle).attr("fill");
         var id = getPID($(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "")) + "r"
         var NS="http://www.w3.org/2000/svg";
-	//&begin [handleOptimalAndExistingInst]
+      //&begin [handleOptimalAndExistingInst]
         var IdenticalId = this.instanceProcessor.getIdenticalID($(circlePair.circle).attr("id").replace(/[A-Za-z]/g, ""), goals, originalPoints) - 1;
         if (IdenticalId != -1){
             var shape = this.getSVGOctagon(xpos, ypos, r);
@@ -278,7 +299,7 @@ Graph.method("getSVGSquare", function(cx, cy, r){
     rect.setAttributeNS(null, "y",cy-r);
     return rect;
 });
-	//&begin [multipleSelection]
+//&begin [multipleSelection]
 //formats object as selected
 Graph.method("selectObject", function(o)
 {
@@ -438,7 +459,6 @@ Graph.method("resize", function() // not attached to the window anymore, so need
 	return true;
 });
 //&end [graphResizing]
-
 //This adds a visual filter that is used by the hottracking higlights
 Graph.method("addFilters", function(){
     var defs  = $("#defs");
@@ -452,6 +472,4 @@ Graph.method("addFilters", function(){
 
     $(filter).append(gaussian);
     $(defs).append(filter);
-
-
 });

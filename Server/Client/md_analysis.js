@@ -1,3 +1,24 @@
+/*
+Copyright (C) 2012, 2013 Neil Redman, Alexander Murashkin <http://gsd.uwaterloo.ca>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 function Analysis(host)
 { 
     this.id = "mdAnalysis";
@@ -70,7 +91,7 @@ Analysis.method("onSelectionChanged", function(list){
     var differentData = data.subsetByFeatures(differentFeatures.toArray()); // ALL DIFFERENT DATA
     differentData.title = "Differences";
 
-    //&begin [setCompletion]
+  //&begin [setCompletion]
     // get the products that are missing to make up the complete set.
     var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), newlist);
 //    console.log(originalData)
@@ -114,7 +135,7 @@ Analysis.method("onSelectionChanged", function(list){
     label += saveButton;
 
     $("#analysis #completeness").html(label);
-	//&end [setCompletion]
+  //&end [setCompletion]
 // add function to addMissing button
     if($("#addMissing")){
         $("#addMissing").click(function(){
@@ -160,7 +181,7 @@ Analysis.method("onSelectionChanged", function(list){
 
 // Adds all the shapes to the table headers
     this.addShapes();
-//&begin [removeVariant]
+  //&begin [removeVariant]
 // add buttons to remove products
     var i;
     var differentProducts = $("#unique #r0").find(".td_instance");
@@ -184,7 +205,7 @@ Analysis.method("onSelectionChanged", function(list){
             $(this).attr("src", "images/remove.png");
         });      
     }
-//&end [removeVariant]
+  //&end [removeVariant]
 //    alert(missingProducts);
     this.addHover();
     
@@ -219,8 +240,8 @@ Analysis.method("saveSelected", function(){
     $("#saveData").val(data);
     $("#SaveForm").submit();
 });
-	//&end [saveInstances]
-	//&begin [hottracking]
+//&end [saveInstances]
+//&begin [hottracking]
 //adds hover effects and hottracking to table headers. Essentially the same as comparison table addHover function
 Analysis.method("addHover", function(){
     that = this;

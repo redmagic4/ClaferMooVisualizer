@@ -1,3 +1,24 @@
+/*
+Copyright (C) 2012, 2013 Alexander Murashkin, Neil Redman <http://gsd.uwaterloo.ca>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 var http = require("http");
 var url = require("url");
 var sys = require("sys");
@@ -15,7 +36,7 @@ var port = config.port;
 
 var server = express();
 
-var timeout = config.timeout;//&line [timeout]
+var timeout = config.timeout;
 
 //support for sessions - used for url uploads
 server.use(express.cookieParser('asasdhf89adfhj0dfjask'));
@@ -24,9 +45,10 @@ server.use(express.session({secret: 'supersecretstring', store: store}));
 
 server.use(express.static(__dirname + '/Client'));
 server.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + '/uploads' }));
-
-var URLs = [];
 //&begin [urlUploading]
+var URLs = [];
+
+
 server.get('/', function(req, res) {
 //uploads now and runs once app.html is fully loaded
 //works because client currently sends one empty post upon completion of loading
@@ -90,7 +112,7 @@ server.post('/upload', function(req, res, next) {
 	} else {
 		var uploadedFilePath = req.files.claferFile.path;				
 	}
-	//&end [urlUploading]
+  //&end [urlUploading]
 //make temp folder for files and move file there
 	var i = 0;
 	while(fs.existsSync("./uploads/" + i + "tempfolder/")){
@@ -109,7 +131,7 @@ server.post('/upload', function(req, res, next) {
 			if (err) throw err;
 			var file_contents;
 			console.log("proceeding with " + uploadedFilePath);
-		    // read the contents of the uploaded file
+			// read the contents of the uploaded file
 			//&begin [timeout]
 		    //serverTimeout = setTimeout(function(){
 		    //	res.send ("Serverside Timeout.");
@@ -198,7 +220,7 @@ server.post('/upload', function(req, res, next) {
 		});
 	});
 });
-//&begin [cleanOldFiles] 
+
 function finishCleanup(dir, results){
 	if (fs.existsSync(dir)){
 		fs.rmdir(dir, function (err) {
@@ -207,7 +229,7 @@ function finishCleanup(dir, results){
 		});
 	}
 }
- 
+//&begin [cleanOldFiles] 
 function cleanupOldFiles(path, dir) {
 
 	//cleanup old files
@@ -227,7 +249,7 @@ function cleanupOldFiles(path, dir) {
 		}
 	});
 
-
+//&end [cleanOldFiles] 
 //done cleanup
 }
 
@@ -238,7 +260,7 @@ function deleteOld(path){
 		});
 	}
 }
-//&end [cleanOldFiles] 
+
 function escapeHtml(unsafe) {
   return unsafe
       .replace(/&/g, "&amp;")

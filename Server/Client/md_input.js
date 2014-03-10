@@ -1,3 +1,25 @@
+
+/*
+Copyright (C) 2012, 2013 Alexander Murashkin, Neil Redman <http://gsd.uwaterloo.ca>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 function Input(host)
 { 
     this.id = "mdInput";
@@ -84,7 +106,7 @@ Input.method("handleError", function(responseText, statusText, xhr, $form)  {
 //&end [handleError]
 //&begin [timeout]
 Input.method("handleTimeout", function(responseText, statusText, xhr, $form)  { 
-//	clearTimeout(this.timeout);
+//	clearTimeout(this.timeout);//&line [timeout]
 	var er = document.getElementById("error_overlay");
 	er.style.visibility = "visible";	
 	document.getElementById("error_report").innerHTML = ('<input id="close_error" type="image" src="images/no.png" alt="close" style="position: relative; left: -325px; top: 0px; width: 20px; height: 20px;"><p> Error: <br> The request timed out. </p>');
@@ -142,6 +164,7 @@ Input.method("convertHtmlTags", function(input) {
 
   return output;
 });
+
 Input.method("OptimizeCall", function(){
    	this.optimizeFlag = 1;
    	this.addInstancesFlag = 0;
