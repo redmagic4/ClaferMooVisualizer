@@ -38,6 +38,7 @@ server.get('/', function(req, res) {
     res.sendfile("Client/app.html");
 });
 //&end [urlUploading]
+//&begin [saveInstances]
 /*
  * Handle Clientside save requests
  */
@@ -47,7 +48,7 @@ server.post('/', function(req, res, next) {
    						 "Content-Disposition": "attachment; filename=Instances.cfr.data"});
 	res.end(req.body.data);
 });
-
+//&end [saveInstances]
 
 
 /*

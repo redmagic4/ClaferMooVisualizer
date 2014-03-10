@@ -159,7 +159,7 @@ Analysis.method("onSelectionChanged", function(list){
         
 });
 
-
+//&begin [saveInstances]
 Analysis.method("saveSelected", function(){
     var selection = this.host.selector.selection;
     var instances = this.host.findModule('mdInput').previousData.Unparsed[1];
@@ -171,3 +171,4 @@ Analysis.method("saveSelected", function(){
     $("#saveData").val(data);
     $("#SaveForm").submit();
 });
+//&end [saveInstances]
