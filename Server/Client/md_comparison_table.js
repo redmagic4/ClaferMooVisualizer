@@ -183,6 +183,7 @@ ComparisonTable.method("onRendered", function()
         i++;
         row = $("#r" + i);
     }
+  //&begin [expandCollapse]
     //  Add collapse buttons for features with children
     var instanceSuperClafer = this.instanceProcessor.getInstanceSuperClafer();
     var abstractClaferTree = this.processor.getAbstractClaferTree("/module/declaration/uniqueid", instanceSuperClafer);
@@ -208,6 +209,7 @@ ComparisonTable.method("onRendered", function()
                 }).css("cursor", "pointer");
             }
         }
+      //&end [expandCollapse]
 //  Add sorting to quality attributes
         //&begin [sortingByQuality,sorting]
         else {

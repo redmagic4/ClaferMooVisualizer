@@ -145,7 +145,7 @@ InstanceFilter.method("resetFilters", function(){
     //refresh filter
     this.filterContent();
 });
-
+//&begin [expandCollapse]
 InstanceFilter.method("hideRowByName", function (name){
     var rows = $(this.tableid + " tr");
     for (var i=0;i<rows.length;i++){
@@ -195,5 +195,5 @@ InstanceFilter.method("openFeature", function (feature){
     var index = this.closedFeatures.indexOf(feature);
     this.closedFeatures.splice(index, 1);
     this.filterContent();
->>>>>>> 115229b5
 });
+//&end [expandCollapse]

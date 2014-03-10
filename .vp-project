@@ -10,6 +10,7 @@ ClaferMooVisualizer
 		hottracking
         views			
 			featureAndQualityMatrix
+				expandCollapse
 				contentFilter
 					filteringByFeatures
 					filterringByGoals
