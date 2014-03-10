@@ -43,6 +43,7 @@ ClaferMooVisualizer
 		claferProcessor
 		claferIGInstanceParser
 		icons
+		helpSystem
 	processManagement
 		timeout
 	multipart

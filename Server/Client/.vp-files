@@ -4,6 +4,8 @@ Instance_parser
 claferIGInstanceParser
 instance_filter.js
 contentFilter
+help_getter.js
+helpSystem
 pfront.js
 ParetoFrontVisualizer
 md_comparison_table.js
