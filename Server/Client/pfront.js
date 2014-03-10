@@ -195,8 +195,8 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
 	this.chart = new google.visualization.BubbleChart(document.getElementById(this.element));
 
     google.visualization.events.addListener(this.chart, 'select', this.myClickHandler); 
-    google.visualization.events.addListener(this.chart, 'onmouseover', function(data){
-
+    google.visualization.events.addListener(this.chart, 'onmouseover', function(data)
+    		//&begin [hottracking]
         $("#comparison #th0_" + (data.row+1)).css("background", "#ffffcc");
         var tomodify = $("#analysis #unique th").has("text:contains('" + (data.row+1) +"')");
         var text = String((data.row+1)) + String((data.row+1)) + "--";
@@ -205,7 +205,7 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
             if (thistext == text)
                 $(this).css("background", "#ffffcc");
         });
-
+      //&end [hottracking]
         var originalPoints = this.host.findModule("mdInput").originalPoints;
         $("#chart circle").each(function(){
             if (data.row >= originalPoints){
@@ -216,7 +216,7 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
         });
     }); 
     google.visualization.events.addListener(this.chart, 'onmouseout', function(data){
-
+    	//&begin [hottracking]
         $("#comparison #th0_" + (data.row+1)).css("background", "");
         var tomodify = $("#analysis #unique th").has("text:contains('" + (data.row+1) +"')");
         var text = String((data.row+1)) + String((data.row+1)) + "--";
@@ -225,7 +225,7 @@ ParetoFrontVisualizer.prototype.draw = function(processor, args, labels)
             if (thistext == text)
                 $(this).css("background", "");
         });
-
+      //&end [hottracking]
 
 
         $("#chart circle").each(function(){

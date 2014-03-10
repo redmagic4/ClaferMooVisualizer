@@ -212,6 +212,7 @@ Analysis.method("saveSelected", function(){
     $("#SaveForm").submit();
 });
 //&end [saveInstances]
+//&begin [hottracking]
 Analysis.method("addHover", function(){
     that = this;
     this.interval = null;
@@ -270,3 +271,4 @@ Analysis.method("addHover", function(){
         clearTimeout(that.timeout);
     });
 });
+//&end [hottracking]
