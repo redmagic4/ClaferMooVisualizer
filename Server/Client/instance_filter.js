@@ -1,3 +1,4 @@
+//filtering functions for table and graph
 function InstanceFilter (host){
     this.host = host
     this.hidden = [];
@@ -5,6 +6,7 @@ function InstanceFilter (host){
     this.originalPoints = host.findModule("mdInput").originalPoints
 }
 
+//Clears then reapplies all active filters
 InstanceFilter.method("filterContent", function(){
     this.unFilter();
 
@@ -56,12 +58,12 @@ InstanceFilter.method("filterContent", function(){
                     this.hideInstance(x);
             }
         }
-      //&end [filteringByGoals]
+        //&end [filteringByGoals]
         //increment row
         i++;
         row = $("#mdComparisonTable #r" + i);
     }
-
+    
     //filtering by permaHidden
     for (var instance in this.permaHidden){
         if (this.permaHidden.hasOwnProperty(instance))
@@ -73,6 +75,7 @@ InstanceFilter.method("filterContent", function(){
 
 });
 
+//hides an instance on both the table and the graph
 InstanceFilter.method("hideInstance", function(x){
 
 // Get graph bubble html locations
@@ -99,7 +102,7 @@ InstanceFilter.method("hideInstance", function(x){
     }
 });
 
-//unhides everything in the hidden stack (all things that have been filtered out)
+//unhides everything in the hidden stack (all things that have been filtered out) (note! does not include permahidden elements)
 InstanceFilter.method("unFilter", function(){
 	var circle_pairs = [];
     for (var i=1; i<=$("#chart circle").length; i++){

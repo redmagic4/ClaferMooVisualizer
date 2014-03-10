@@ -105,6 +105,7 @@ Graph.method("assignValue", function (id, value)
 	
 });
 
+//redraws the graph
 Graph.method("redrawParetoFront", function()
 {
     if (this.instanceProcessor == null)
@@ -159,12 +160,13 @@ Graph.method("redrawParetoFront", function()
         labels.push(label4);
     }
     
-    this.PFVisualizer.draw(this.instanceProcessor, args, labels);
+    this.PFVisualizer.draw(this.Processor, this.instanceProcessor, args, labels);
     this.makePointsSelected(this.host.selector.selection);
     this.makePointsReady();
     this.addFilters();
 });
 
+//adds ids to the circles and text on the graph for the other functions to use
 Graph.method("addIds", function(){
     var i = 1;
     var graph_data = $("#chart g:contains('V1')")[2];
@@ -243,6 +245,7 @@ Graph.method("makePointsReady", function(){
     }
 });
 
+//return an svg octagon of 2r diameter centered at (x,y)
 Graph.method("getSVGOctagon", function(x, y, r){
     var NS="http://www.w3.org/2000/svg";
     var oct= document.createElementNS(NS,"polygon");
@@ -264,6 +267,7 @@ Graph.method("getSVGOctagon", function(x, y, r){
     return oct;
 });
 
+//returns an svg square of width 2r centered at (x,y)
 Graph.method("getSVGSquare", function(cx, cy, r){
     var NS="http://www.w3.org/2000/svg";
     var rect= document.createElementNS(NS,"rect");
@@ -274,34 +278,40 @@ Graph.method("getSVGSquare", function(cx, cy, r){
     return rect;
 });
 	//&begin [multipleSelection]
+//formats object as selected
 Graph.method("selectObject", function(o)
 {
     $(o).attr("fill", "#ff0000");    
 });
 
+//formats object as not selected
 Graph.method("deselectObject", function(o)
 {
     $(o).attr("fill", "#000000");    
 });
 
+//runs selectObject on points
 Graph.method("makePointsSelected", function(points)
 {
     var module = this;
     this.selectObject($("#" + points + "t text")[1]);
 });
 
+//runs deselectObject on points
 Graph.method("makePointsDeselected", function(points)
 {
     var module = this;
     this.deselectObject($("#" + points + "t text")[1]);
 });
 //&end [multipleSelection]
+//assigns a goal to an axis
 Graph.method("assignToAxis", function(axis, arg, label)
 {
 	this.assignValue(axis + "AxisConfig_arg", arg);
 	this.assignValue(axis + "AxisConfig_label", label);
 });
 
+//gets containers and placeholders
 Graph.method("getContent", function()
 {
 	var table = $('<table cellspacing="0" cellpadding="0" border="0" id="graph_table"></table>');
@@ -426,6 +436,7 @@ Graph.method("resize", function() // not attached to the window anymore, so need
 });
 //&end [graphResizing]
 
+//This adds a visual filter that is used by the hottracking higlights
 Graph.method("addFilters", function(){
     var defs  = $("#defs");
     var NS="http://www.w3.org/2000/svg";

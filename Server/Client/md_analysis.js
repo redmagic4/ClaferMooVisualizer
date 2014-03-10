@@ -38,7 +38,9 @@ Analysis.method("getInitContent", function()
 	return '';  
 });
 
+//rebuilds the table with the new selection data
 Analysis.method("onSelectionChanged", function(list){
+    //pulls data from the comparison table
     var originalData = this.host.findModule("mdComparisonTable").dataTable;
     var newlist = [];
     for (var i = 0; i < list.length; i++){
@@ -156,7 +158,7 @@ Analysis.method("onSelectionChanged", function(list){
     else
         $("#analysis #unique").html("No Data");
 
-// make circles get added after circles get ID back
+// Adds all the shapes to the table headers
     this.addShapes();
 //&begin [removeVariant]
 // add buttons to remove products
@@ -188,6 +190,7 @@ Analysis.method("onSelectionChanged", function(list){
     
 });
 
+//adds Shapes to the table headers
 Analysis.method("addShapes", function(){
     Arow = $("#analysis #unique #r0 .td_instance");
     for (var i=0; i<Arow.length; i++){
@@ -202,8 +205,9 @@ Analysis.method("addShapes", function(){
         $(correspondingCell).find("rect").clone().prependTo($(Arow[i]).find(".svghead"));
         $(correspondingCell).find("polygon").clone().prependTo($(Arow[i]).find(".svghead"));
     }
-})
+});
 //&begin [saveInstances]
+//saves all selected instances and downloads them to client
 Analysis.method("saveSelected", function(){
     var selection = this.host.selector.selection;
     var instances = this.host.findModule('mdInput').previousData.Unparsed[1];
@@ -215,8 +219,9 @@ Analysis.method("saveSelected", function(){
     $("#saveData").val(data);
     $("#SaveForm").submit();
 });
-//&end [saveInstances]
-//&begin [hottracking]
+	//&end [saveInstances]
+	//&begin [hottracking]
+//adds hover effects and hottracking to table headers. Essentially the same as comparison table addHover function
 Analysis.method("addHover", function(){
     that = this;
     this.interval = null;
