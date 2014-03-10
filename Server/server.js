@@ -65,7 +65,7 @@ server.post('/upload', function(req, res, next) {
    				} else if (URLs[x].session === req.sessionID && ("claferFileURL=" + URLs[x].url) === url.parse(req.body.claferFileURL).query){
    					var i = 0;
    					var uploadedFilePath = req.sessionID;
-   					uploadedFilePath = uploadedFilePath.replace(/\\/g, "").replace('/', "");
+   					uploadedFilePath = uploadedFilePath.replace(/[\/\\]/g, "");
    					uploadedFilePath = __dirname + "/uploads/" + uploadedFilePath;
    					while(fs.existsSync(uploadedFilePath + i.toString() + ".cfr")){
    						i = i+1;
@@ -113,7 +113,15 @@ server.post('/upload', function(req, res, next) {
     //}, 60000);
 	//&end [timeout]
 	fs.readFile(uploadedFilePath, function (err, data) {
-    file_contents = data.toString();
+		if(data)
+    		file_contents = data.toString();
+    	else{
+    		res.writeHead(500, { "Content-Type": "text/html"});
+			res.end();
+			cleanupOldFiles(uploadedFilePath, dlDir);
+			return;
+    	}
+
 		if (uploadedFilePath.substring(uploadedFilePath.length - 5) == ".data"){
 			res.writeHead(200, { "Content-Type": "text/html"});
 			res.end(file_contents);

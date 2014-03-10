@@ -31,13 +31,15 @@ ComparisonTable.method("onDataLoaded", function(data){
     this.content = $('<div id="comparison" class="comparison"></div>').append(new TableVisualizer().getHTML(this.dataTable));
     this.hidden = [];
     this.permaHidden = {};
-    $("#mdComparisonTable .window-titleBar-content").text(this.dataTable.title);
+    $("#mdComparisonTable .window-titleBar-content").text("Pareto Front Table: " + this.dataTable.title);
     this.currentRow = 1;
 
 });
 
 ComparisonTable.method("onRendered", function()
 {
+// Add circles to table headers
+    this.addShapes();
 
 // Add search bar 
     var td = $('#comparison .table_title')[0];
@@ -73,13 +75,17 @@ ComparisonTable.method("onRendered", function()
     $('#mdComparisonTable .window-content').scroll(function(){
             $("#comparison #tHeadContainer").css("position", "relative");
             $("#comparison #tHeadContainer").css("top", ($("#comparison").height() - $('#mdComparisonTable .window-content').scrollTop())*(-1) + $("#comparison #tHeadContainer").height());
-            this.currentRow = 1;
+            $("#comparison #tBodyContainer").css("top" , $("#comparison #tHeadContainer").height());
     });
+
+    $("#mdComparisonTable").resize(function(){
+        $('#mdComparisonTable .window-content').scroll();
+    })
 
 // Move body into new div
     $("#comparison").prepend('<div id="tBodyContainer" style="position: relative;"></div>');
     $("#tBodyContainer").prepend($("#comparison #tBody"));
-    $("#tBodyContainer").css("top" , $("#comparison #tHeadContainer").height());
+    
 
 
 
@@ -226,7 +232,10 @@ ComparisonTable.method("onRendered", function()
         event.stopPropagation();
     });
 
+    //fire the scroll handler to align table after half a second (fixes chrome bug)
+    setTimeout(function(){$('#mdComparisonTable .window-content').scroll()},500);
     this.filterContent();
+
 });
 //&begin [contentFilter]
 /* unfilters table then hides columns that don't pass 
@@ -396,7 +405,7 @@ ComparisonTable.method("getDataTable", function()
 //	alert(instanceSuperClafer);
 	var abstractClaferTree = this.processor.getAbstractClaferTree("/module/declaration/uniqueid", instanceSuperClafer);
 
-	
+//    console.log(abstractClaferTree)	;
 //	alert(abstractClaferTree.subclafers[0].subclafers.length);
 	
 //	alert(instanceSuperClafer);
@@ -405,36 +414,38 @@ ComparisonTable.method("getDataTable", function()
 	var parent = null;
 	var current = abstractClaferTree;
 	abstractClaferOutput = new Array();
-	
+
 	this.traverse(current, 0);
 	output = abstractClaferOutput;
 	
-
-    var result = new DataTable();
+    var originalPoints = this.host.findModule("mdInput").originalPoints;
+    var goalNames = this.processor.getGoals();
+    var result = new DataTable();   
     result.title = output[0].displayWithMargins;
     
     for (var j = 1; j <= instanceCount; j++)
     {
-        result.products.push("V" + j);
+        result.products.push(String(j));
     }
 	
 	for (var i = 0; i < output.length; i++)
 	{
         var currentMatrixRow = new Array();
         var currentContextRow = new Array();
+        if (i > 0){ // do not push the parent clafer
+            result.features.push(output[i].displayWithMargins + " " + this.processor.getIfMandatory(output[i].claferId));
+            currentContextRow.push(output[i].displayWithMargins + " " + this.processor.getIfMandatory(output[i].claferId));
+        }
+        else 
+            currentContextRow.push(output[i].displayWithMargins);
 
-        if (i > 0) // do not push the parent clafer
-            result.features.push(output[i].displayWithMargins);
-            
-        currentContextRow.push(output[i].displayWithMargins);
-        
         denyAddContextRow = false;
         
 		for (var j = 1; j <= instanceCount; j++)
 		{
 			if (i == 0)
             {
-				currentContextRow.push("V" + j);
+				currentContextRow.push(String(j));
             }
 			else
 			{
@@ -455,7 +466,7 @@ ComparisonTable.method("getDataTable", function()
         if (!denyAddContextRow)
             result.formalContext.push(currentContextRow);
 	}
-
+    //console.log(result)
 	return result;
 
 });
@@ -567,12 +578,12 @@ ComparisonTable.method("addHovering", function()
 
 //makes instance red on graph, for actual selection function see onSelected(pid) in selector.js
 ComparisonTable.method("makePointsSelected", function (pid){;
-    $("#mdComparisonTable #th0_" + pid.substring(1)).css("color", "red");
+    $("#mdComparisonTable #th0_" + pid.substring(1)).find("text").css("fill", "Red");
 });
 
 //makes instance red on graph, for actual deselection function see onDeselected(pid) in selector.js
 ComparisonTable.method("makePointsDeselected", function (pid){
-    $("#mdComparisonTable #th0_" + pid.substring(1)).css("color", "black");
+    $("#mdComparisonTable #th0_" + pid.substring(1)).find("text").css("fill", "Black");
 });
 //&begin [searchBar]
 ComparisonTable.method("scrollToSearch", function (input){
@@ -637,7 +648,7 @@ ComparisonTable.method("rowSort", function(rowText){
                 if($(current).hasClass("sortDesc")){
                     if (row.attr("id") == "r0")
                         sortableArray.sort(function(a,b){
-                            return a.value.substring(1) - b.value.substring(1);
+                            return a.value - b.value
                         });
                     else
                         sortableArray.sort(function(a,b){
@@ -647,7 +658,7 @@ ComparisonTable.method("rowSort", function(rowText){
                 else if($(current).hasClass("sortAsc")){
                     if (row.attr("id") == "r0")
                         sortableArray.sort(function(a,b){
-                            return b.value.substring(1) - a.value.substring(1);
+                            return b.value - a.value
                         });
                     else
                         sortableArray.sort(function(a,b){
@@ -681,6 +692,55 @@ ComparisonTable.method("rowSort", function(rowText){
     }
 });
 //&end [sorting]
+ComparisonTable.method("addShapes", function(){
+    var that = this;
+    $("#comparison #r0 .td_instance").each(function(){
+        $(this).find("circle").remove()
+        $(this).find("rect").remove()
+        $(this).find("polygon").remove()
+        if ($(this).find(".svghead").length == 0)
+            var text = $(this).text();
+        else 
+            var text  = $($(this).find(".svghead text")[0]).text(); 
+
+        console.log(text);
+        $(this).html('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svghead" height="22px" width="22px"><text text-anchor="middle" x="11px" y="16px" stroke="#ffffff" stroke-width="3px">' + text + '</text><text text-anchor="middle" x="11px" y="16px">' + text + '</text></svg>')
+        if ($("#V" + text + "c").length == 1){
+            $("#V" + text + "c").clone()
+            var thisCircle = $("#V" + text + "c").clone();
+            $(thisCircle).removeAttr("id");
+            //if it's ever needed to swich back to colored versions remove this line
+            $(thisCircle).css("fill", "#3366cc");
+            $(thisCircle).attr("cx", "11px");
+            $(thisCircle).attr("cy", "11px");
+            $(thisCircle).attr("r", "10px");
+            $(thisCircle).prependTo($(this).find(".svghead"));
+        }
+    // This will get any hidden circles and then put the new shape on top
+        if ($("#V" + text + "r").length == 1){
+            $("#V" + text + "r").clone().prependTo($(this).find(".svghead"));
+            var thisRect = $(this).find("rect");
+            $(thisRect).removeAttr("id");
+            //if it's ever needed to swich back to colored versions remove this line
+            $(thisRect).css("fill", "#3366cc");
+            $(thisRect).attr("x", "1px");
+            $(thisRect).attr("y", "1px");
+            $(thisRect).attr("width", "20px");
+            $(thisRect).attr("height", "20px");
+        } else if ($("#V" + text + "h").length == 1){
+            var fill = $("#V" + text + "h").css("fill");
+            console.log(that);
+            var thisHex = that.host.findModule("mdGraph").getSVGHexagon(10, 11, 10);
+            //if it's ever needed to swich back to colored versions "#3366cc" to fill
+            $(thisHex).css("fill", "#3366cc");
+            $(thisHex).attr("stroke-width", "1");
+            $(thisHex).attr("stroke", "#000000");
+            $(thisHex).prependTo($(this).find(".svghead"));
+        } 
+
+    });
+});
+
 ComparisonTable.method("getInitContent", function()
 {
 	return '';	   

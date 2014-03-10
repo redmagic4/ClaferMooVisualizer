@@ -15,7 +15,8 @@ function Graph(host)
 }
 
 Graph.method("onDataLoaded", function(data){
-    this.instanceProcessor = new InstanceProcessor(data.instancesXML);    
+    this.instanceProcessor = new InstanceProcessor(data.instancesXML);
+    this.Processor = new ClaferProcessor(data.claferXML)    
 });
 
 Graph.method("onRendered", function()
@@ -57,7 +58,7 @@ Graph.method("onRendered", function()
 	}
 	else
 		$("#chart").hide();
-
+    $("#mdGraph .window-titleBar-content").text("Pareto Front Graph: " + this.instanceProcessor.getInstanceSuperClafer().replace(/[^_]{1,}[_]/, ""));
     this.addIds();
 });
 
@@ -91,6 +92,7 @@ Graph.method("drop", function(ev)
     
 	this.assignToAxis(id, arg, label, true);
     this.redrawParetoFront();
+    host.findModule("mdComparisonTable").addShapes();
     host.findModule("mdComparisonTable").filterContent();
 });
 
@@ -185,6 +187,10 @@ Graph.method("addIds", function(){
     for(i=0; i<circle_pairs.length; i++){
         $(circle_pairs[i].circle).attr("id", "V" + (i+1) + "c");
         $(circle_pairs[i].text_data).attr("id", "V" + (i+1) + "t");
+        var child1 = $(circle_pairs[i].text_data).children()[0]
+        var child2 = $(circle_pairs[i].text_data).children()[1]
+        $(child1).text($(child1).text().replace("V", ""));
+        $(child2).text($(child1).text().replace("V", ""));
     }
 
 });
@@ -192,16 +198,17 @@ Graph.method("addIds", function(){
 // Make instances squares or hexagons
 Graph.method("makePointsNew", function(){
     this.addIds();
-
+    var goals = this.Processor.getGoals();
+    var originalPoints = this.host.findModule("mdInput").originalPoints
 // Get graph bubble html locations
   //&begin [handleOptimalAndExistingInst]
     originalCirclePairs = [];
-    for (var i=1; i<=this.host.findModule("mdInput").originalPoints; i++){
+    for (var i=1; i<=originalPoints; i++){
         originalCirclePairs.push({circle: $("#V" + i + "c"), text_data: $("#V" + i + "t"), ident: i});
     }
   //&end [handleOptimalAndExistingInst]
     var circle_pairs = [];
-    for (var i=(this.host.findModule("mdInput").originalPoints + 1); i<=$("#chart circle").length; i++){
+    for (var i=(originalPoints + 1); i<=$("#chart circle").length; i++){
         circle_pairs.push({circle: $("#V" + i + "c"), text_data: $("#V" + i + "t"), ident: i});
     }
     //hide table header (row 0)
@@ -214,27 +221,25 @@ Graph.method("makePointsNew", function(){
         var id = "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "r"
         var NS="http://www.w3.org/2000/svg";
 	//&begin [handleOptimalAndExistingInst]
-        var IdenticalId = this.isOptimal((circlePair.circle).attr("id").replace(/[A-Za-z]/g, "")) - 1;
+        var IdenticalId = this.instanceProcessor.getIdenticalID($(circlePair.circle).attr("id").replace(/[A-Za-z]/g, ""), goals, originalPoints) - 1;
         if (IdenticalId != -1){
             var shape = this.getSVGHexagon(xpos, ypos, r);
-            var newID = "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "h " + $(originalCirclePairs[IdenticalId].circle).attr("id");
+            var newID = "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "h";
             shape.setAttributeNS(null, "id", newID);
             $(originalCirclePairs[IdenticalId].circle).hide();
             $(originalCirclePairs[IdenticalId].text_data).hide();
             host.findModule("mdComparisonTable").permaHidden["V"+(IdenticalId+1)] = true;
         } else {
             var shape = this.getSVGSquare(xpos, ypos, r)
-            shape.setAttributeNS(null, "id", "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "s");
+            shape.setAttributeNS(null, "id", "V" + $(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "") + "r");
         }
       //&end [handleOptimalAndExistingInst]
-        shape.setAttributeNS(null, "id",id);
         shape.setAttributeNS(null, "stroke","#000000");
         shape.setAttributeNS(null, "stroke-width","1");
         shape.setAttributeNS(null, "fill-opacity","0.8");
         shape.style.fill=fill;
         $(circlePair.text_data).prepend(shape);
-        $(circlePair.circle).attr("fill-opacity","0");
-        $(circlePair.circle).attr("stroke-width","0");
+        $(circlePair.circle).hide();
     }
 });
 Graph.method("getSVGHexagon", function(x, y, r){
@@ -265,35 +270,7 @@ Graph.method("getSVGSquare", function(cx, cy, r){
     rect.setAttributeNS(null, "y",cy-r);
     return rect;
 });
-//&begin [handleOptimalAndExistingInst]
-// if instance is optimal, returns identical optimal instance id, else returns -1
-Graph.method("isOptimal", function(id)
-{
-    var abstractXML = this.host.findModule("mdInput").previousData.abstractXML;
-    var goals = (new ClaferProcessor(abstractXML)).getGoals();
-    console.log(id);
-    var values={};
-    for (i=0; i<goals.length; i++){
-        values[goals[i].arg] = this.instanceProcessor.getFeatureValue(id, goals[i].arg, true);
-    }
-    console.log(values);
-    var instanceCount = this.findModule("mdInput").originalPoints;
-    for (i=1; i<=instanceCount; i++){
-        var isOptimal = true;
-        for (j=0; j<goals.length; j++){
-            var check =  this.instanceProcessor.getFeatureValue(i, goals[j].arg, true);
-            if (check != values[goals[j].arg]){
-                isOptimal = false;
-                break;
-            }
-        }
-        if (isOptimal)
-            return i;
-    }
-    return -1;
-});
-//&end [handleOptimalAndExistingInst]
-//&begin [multipleSelection]
+	//&begin [multipleSelection]
 Graph.method("selectObject", function(o)
 {
     $(o).attr("fill", "#ff0000");    
@@ -307,35 +284,13 @@ Graph.method("deselectObject", function(o)
 Graph.method("makePointsSelected", function(points)
 {
     var module = this;
-
-    for (var i = 0; i < points.length; i++)
-    {
-        $('#chart text').each(function()
-        {
-            if (this.firstChild)
-            {
-                if (this.firstChild.nodeValue == points[i])
-                    module.selectObject(this);
-            }
-        });
-    }
+    this.selectObject($("#" + points + "t text")[1]);
 });
 
 Graph.method("makePointsDeselected", function(points)
 {
     var module = this;
-
-    for (var i = 0; i < points.length; i++)
-    {
-        $('#chart text').each(function()
-        {
-            if (this.firstChild)
-            {
-                if (this.firstChild.nodeValue == points[i])
-                    module.deselectObject(this);// alert(this.firstChild.nodeValue);
-            }
-        });
-    }
+    this.deselectObject($("#" + points + "t text")[1]);
 });
 //&end [multipleSelection]
 Graph.method("assignToAxis", function(axis, arg, label)

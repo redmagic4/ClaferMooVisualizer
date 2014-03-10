@@ -1,7 +1,7 @@
 function Analysis(host)
 { 
     this.id = "mdAnalysis";
-    this.title = "Analysis";
+    this.title = "Comparison View";
     
     this.width = 500;
     this.height = 310;
@@ -13,6 +13,8 @@ function Analysis(host)
 }
 
 Analysis.method("onDataLoaded", function(data){
+    this.instanceProcessor = new InstanceProcessor(data.instancesXML);
+    this.Processor = new ClaferProcessor(data.claferXML);
 });
 
 Analysis.method("onRendered", function()
@@ -37,8 +39,19 @@ Analysis.method("getInitContent", function()
 });
 
 Analysis.method("onSelectionChanged", function(list){
-    var originalData = this.host.findModule("mdComparisonTable").dataTable;    
-    data = originalData.subsetByProducts(list);
+    var originalData = this.host.findModule("mdComparisonTable").dataTable;
+    var newlist = [];
+    for (var i = 0; i < list.length; i++){
+        newlist.push(list[i].replace("V", ""));
+    }   
+
+//    console.log(list);
+    for (var i = 0; i < newlist.length; i++){
+        newlist[i] = newlist[i];
+    }
+//    console.log(newlist);
+
+    data = originalData.subsetByProducts(newlist);
     
     if (data.products.length <= 1)
     {
@@ -57,12 +70,13 @@ Analysis.method("onSelectionChanged", function(list){
 
     //&begin [setCompletion]
     // get the products that are missing to make up the complete set.
-    var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), list);
+    var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), newlist);
+//    console.log(originalData)
     var permaHidden = this.host.findModule("mdComparisonTable").permaHidden;
 
     if (missingProducts){
         for (var i = 0; i < missingProducts.length; i++){
-            if (permaHidden.hasOwnProperty(missingProducts[i]))
+            if (permaHidden.hasOwnProperty("V" + missingProducts[i]))
                 missingProducts.splice(i, 1);
         }
     }
@@ -88,7 +102,7 @@ Analysis.method("onSelectionChanged", function(list){
         }
         else
         {
-            label += '[Complete] - The set is a complete concept';
+            label += '[Complete] - The set defines a complete class';
         }
     }
     else
@@ -104,7 +118,7 @@ Analysis.method("onSelectionChanged", function(list){
         $("#addMissing").click(function(){
             var i;
             for (i = 0; i<missingProducts.length; i++){
-                host.selector.onSelected(missingProducts[i]);
+                host.selector.onSelected("V" + missingProducts[i].replace(/[\u2B22\u25CF\u25A0]/g, ""));
             }
         }).css("cursor", "pointer");
     }
@@ -137,16 +151,19 @@ Analysis.method("onSelectionChanged", function(list){
     }
     else
         $("#analysis #unique").html("No Data");
+
+// make circles get added after circles get ID back
+    this.addShapes();
 //&begin [removeVariant]
 // add buttons to remove products
     var i;
     var differentProducts = $("#unique #r0").find(".td_instance");
     for (i=0; i<$(differentProducts).length; i++){
-        $(differentProducts[i]).prepend('<image id="rem' + $(differentProducts[i]).text() + '" src="images/remove.png" alt="remove">')
-        var buttonId = "#rem" + $(differentProducts[i]).text()
+        $(differentProducts[i]).prepend('<image id="rem' + $(differentProducts[i]).find(".svghead :last-child").text() + '" src="images/remove.png" alt="remove">')
+        var buttonId = "#rem" + $(differentProducts[i]).find(".svghead :last-child").text()
         $(buttonId).click(function(){
-            console.log($(this).attr("id").substring(3))
-            host.selector.onDeselected($(this).attr("id").substring(3));
+            console.log("V" + String($(this).attr("id").substring(3)));
+            host.selector.onDeselected("V" + String($(this).attr("id").substring(3)));
         });
         $(buttonId).css("float", "left");
         $(buttonId).css("vertical-align", "middle");
@@ -167,6 +184,21 @@ Analysis.method("onSelectionChanged", function(list){
         
 });
 
+Analysis.method("addShapes", function(){
+    Arow = $("#analysis #unique #r0 .td_instance");
+    for (var i=0; i<Arow.length; i++){
+        if ($(Arow[i]).find(".svghead").length == 0)
+            var text = $(Arow[i]).text()
+        else 
+            var text  = $($(Arow[i]).find(".svghead text")[0]).text(); 
+        console.log(text);
+        var correspondingCell = $("#comparison #th0_" + text);
+        $(Arow[i]).html('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svghead" height="22px" width="22px"><text text-anchor="middle" x="11px" y="16px" stroke="#ffffff" stroke-width="3px">' + text + '</text><text text-anchor="middle" x="11px" y="16px">' + text + '</text></svg>')
+        $(correspondingCell).find("circle").clone().prependTo($(Arow[i]).find(".svghead"));
+        $(correspondingCell).find("rect").clone().prependTo($(Arow[i]).find(".svghead"));
+        $(correspondingCell).find("polygon").clone().prependTo($(Arow[i]).find(".svghead"));
+    }
+})
 //&begin [saveInstances]
 Analysis.method("saveSelected", function(){
     var selection = this.host.selector.selection;
