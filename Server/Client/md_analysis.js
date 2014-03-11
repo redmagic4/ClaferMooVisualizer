@@ -25,9 +25,9 @@ function Analysis(host)
     this.title = "Variant Comparer";
     
     this.width = 500;
-    this.height = 310;
+    this.height = 233;
     this.posx = 0;
-    this.posy = 195;
+    this.posy = 272;
     
     this.host = host;
     this.dataTable = null;
@@ -68,11 +68,9 @@ Analysis.method("onSelectionChanged", function(list){
         newlist.push(parsePID(list[i]));
     }   
 
-//    console.log(list);
     for (var i = 0; i < newlist.length; i++){
         newlist[i] = newlist[i];
     }
-//    console.log(newlist);
 
     data = originalData.subsetByProducts(newlist);
     
@@ -94,7 +92,6 @@ Analysis.method("onSelectionChanged", function(list){
   //&begin [setCompletion]
     // get the products that are missing to make up the complete set.
     var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), newlist);
-//    console.log(originalData)
     var permaHidden = this.host.findModule("mdComparisonTable").filter.permaHidden;
 
     if (missingProducts){
@@ -189,7 +186,7 @@ Analysis.method("onSelectionChanged", function(list){
         $(differentProducts[i]).prepend('<image id="rem' + $(differentProducts[i]).find(".svghead :last-child").text() + '" src="images/remove.png" alt="remove">')
         var buttonId = "#rem" + $(differentProducts[i]).find(".svghead :last-child").text()
         $(buttonId).click(function(){
-            console.log(getPID(String($(this).attr("id").substring(3))));
+//            console.log(getPID(String($(this).attr("id").substring(3))));
             host.selector.onDeselected(getPID(String($(this).attr("id").substring(3))));
         });
         $(buttonId).css("float", "left");
@@ -219,7 +216,6 @@ Analysis.method("addShapes", function(){
             var text = $(Arow[i]).text()
         else 
             var text  = $($(Arow[i]).find(".svghead text")[0]).text(); 
-        console.log(text);
         var correspondingCell = $("#comparison #th0_" + text);
         $(Arow[i]).html('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svghead" height="22px" width="22px"><text text-anchor="middle" x="11px" y="16px" stroke="#ffffff" stroke-width="3px">' + text + '</text><text text-anchor="middle" x="11px" y="16px">' + text + '</text></svg>')
         $(correspondingCell).find("circle").clone().prependTo($(Arow[i]).find(".svghead"));
@@ -231,7 +227,7 @@ Analysis.method("addShapes", function(){
 //saves all selected instances and downloads them to client
 Analysis.method("saveSelected", function(){
     var selection = this.host.selector.selection;
-    var instances = this.host.findModule('mdInput').previousData.Unparsed[1];
+    var instances = this.host.findModule('mdInput').previousData.Unparsed;
     var parser = new InstanceParser(instances);
     var data = "";
     for (var i=0; i < selection.length; i++){

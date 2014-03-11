@@ -1,5 +1,7 @@
 instance_filter.js
 contentFilter
+instance_parser.js
+instanceParser
 md_comparison_table.js
 featureAndQualityMatrix
 md_goals.js
@@ -14,5 +16,7 @@ md_usecases.js
 useCases
 md_analysis.js
 variantComparer
+md_clafermodel.js
+claferModel
 selector.js
 multipleSelection

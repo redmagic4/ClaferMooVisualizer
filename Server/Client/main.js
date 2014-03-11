@@ -25,23 +25,23 @@ SOFTWARE.
 //var mdConsole;
 //var mdInput;
 
-var host;
+var host = null;
 
 google.load("visualization", "1", {packages:["corechart"]});
 
 
 $(document).ready(function()
 {
-    
     var modules = Array();
     
     modules.push("Goals");
     modules.push("Graph");
-    modules.push("Console");
+//    modules.push("Console");
     modules.push("Input");
 //    modules.push("UseCases");
     modules.push("Analysis");
     modules.push("ComparisonTable");
+    modules.push("ClaferModel");
     
     host = new Host(modules);
 });
@@ -50,6 +50,8 @@ function Host(modules)
 {
     this.key = Math.floor(Math.random()*1000000000).toString(16);
     this.selector = new Selector(this);
+    this.instanceCounterArg = "?special_counter?"; 
+    this.instanceCounterLabel = "#instance"
     this.modules = new Array();
     this.helpGetter = new helpGetter(this);
     
@@ -69,6 +71,13 @@ function Host(modules)
         {
             resize = this.modules[i].resize;
         }
+
+        var windowType = "normal";
+        
+        if (this.modules[i].iframeType)
+        {
+            windowType = "iframe";
+        }
         
         var x = $.newWindow({
             id: this.modules[i].id,
@@ -78,6 +87,7 @@ function Host(modules)
             posx: this.modules[i].posx,
             posy: this.modules[i].posy,
             content: '',
+            type: windowType,
             onDragBegin : null,
             onDragEnd : null,
             onResizeBegin : null,
@@ -94,6 +104,11 @@ function Host(modules)
         if (this.modules[i].getInitContent)
             $.updateWindowContent(this.modules[i].id, this.modules[i].getInitContent());
 
+        if (this.modules[i].iframeType)
+        {
+            $.updateWindowContent(this.modules[i].id, '<iframe id="model" src="' + this.modules[i].ajaxUrl + '" frameborder="0" width="' + this.modules[i].width + '"></iframe>');
+        }
+            
         if (this.modules[i].onInitRendered)
             this.modules[i].onInitRendered();        
 
@@ -142,14 +157,8 @@ Host.method("selectionChanged", function(data)
 //runs after data is uploaded from server. Causes all modules to update their data.
 Host.method("updateData", function(data)
 {
-    if (data.error == true)
+    if (data.error == true) // we do not process errors here anymore
     {
-        for (var i = 0; i < this.modules.length; i++)
-        {
-            if (this.modules[i].onError)
-                this.modules[i].onError(data.output);
-        }
-        
         return;
     }
 
@@ -160,7 +169,14 @@ Host.method("updateData", function(data)
         if (this.modules[i].onDataLoaded)
             this.modules[i].onDataLoaded(data);
     }
-
+	//&begin console
+    if (typeof variable !== 'undefined' && console.log)
+    {
+        console.log(data.claferXML);
+        console.log(data.instancesXML);
+        console.log(data.output);
+    }
+    //&end console
     for (var i = 0; i < this.modules.length; i++)
     {
         if (this.modules[i].getContent)
@@ -173,6 +189,8 @@ Host.method("updateData", function(data)
             this.modules[i].resize();
                 
     }
+    
+    $.placeholder.shim(); // fixes the placeholder issue in IE
     
 });
 

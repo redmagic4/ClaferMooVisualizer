@@ -2,7 +2,13 @@ ClaferMooVisualizer
     server
         or backends
 			ClaferMoo
+			ChocoSingle
+		 cache
+		fileUpload
+			handleEmptyFile
+			fileProcessing
 		cleanOldFiles
+		checkingDependencies
 		urlUploading
     client
 		jquery
@@ -30,8 +36,10 @@ ClaferMooVisualizer
 			useCases	
 			objectives
 			console
+			claferModel
 			input
-				processToolResult
+				windowKey
+				instanceProcessing
 				handleError
 			multipleSelection
 			ListVisualizer
@@ -46,5 +54,12 @@ ClaferMooVisualizer
 		icons
 		helpSystem
 	processManagement
-		timeout
+		polling
+        timeout
+			pingTimeout
+			executionTimeout
+        errorHandling
+        cancellation
+	instanceParser
+	selectionOfExamples
 	multipart
