@@ -31,6 +31,7 @@ function VariantComparer(host, settings)
     this.posy = this.settings.layout.posy;
 
     this.host = host;
+    this.colWidth = "200";
     
     this.dataTable = null;
     this.unparsedInstances = null;
@@ -174,7 +175,7 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
     
     if (commonFeatures.length > 0)
     {            
-        $("#VariantComparer #common").html(new TableVisualizer().getHTML(commonData));
+        $("#VariantComparer #common").html(new TableVisualizer().getHTML(commonData, this.colWidth));
     }
     else
         $("#VariantComparer #common").html("No Data");
@@ -182,7 +183,7 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
         
     if (differentFeatures.length > 0)
     {    
-        $("#VariantComparer #unique").html(new TableVisualizer().getHTML(differentData));
+        $("#VariantComparer #unique").html(new TableVisualizer().getHTML(differentData, this.colWidth));
     }
     else
         $("#VariantComparer #unique").html("No Data");
@@ -212,6 +213,11 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
             $(this).attr("src", "commons/Client/images/remove.png");
         });      
     }    
+
+//  adding tooltips
+
+    $("#VariantComparer [title]").tipsy({fade: true, gravity: 'w', html: true});
+
 });
 
 //saves all selected instances and downloads them to client

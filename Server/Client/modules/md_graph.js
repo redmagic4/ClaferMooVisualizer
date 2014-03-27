@@ -101,7 +101,6 @@ Graph.method("onRendered", function()
 		$("#chart").hide();
     }
     
-    $("#mdGraph .window-titleBar-content").text("Bubble Front Graph: " + this.instanceProcessor.getInstanceSuperClafer().replace(/[^_]{1,}[_]/, ""));
     this.addIds();
 
     this.resize();
@@ -126,6 +125,7 @@ Graph.method("completeDrop", function(target, arg, label)
         id = node.id;
     }
     
+    console.log("assignToAxis:" + arg + "|" + label + "|");
 	this.assignToAxis(id, arg, label, true);
     
     return id;
@@ -136,6 +136,7 @@ Graph.method("drop", function(ev)
 	ev.preventDefault();
 
 	var data = ev.dataTransfer.getData("Text");
+    console.log("data:" + data);
 	
 	var parts = data.split("|");
 	
@@ -143,7 +144,9 @@ Graph.method("drop", function(ev)
 		return;
 	
 	var arg = parts[0];
-	var label = parts[1];
+	var label = parts[1].replaceAll("-", ".");
+    console.log("arg:" + arg);
+    console.log("label:" + label);
 
     if (this.goals.length == 1) // case of 1 dimension
     {

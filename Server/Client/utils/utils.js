@@ -10,11 +10,11 @@ function preprocessMOOResult(result, host)
         host.storage.instanceFilter.permaHidden = {}; // reset the hidden instances
         host.storage.selector.clearSelection(); // reset the selection
 
-    	if (!result.optimizer_instances)
-		  {
-          host.findModule("mdInput").handleError(null, "malformed_output", null);
-       		return false;
-   		}
+      	if (!result.optimizer_instances)
+  		  {
+            host.findModule("mdInput").handleError(null, "empty_instances", null);
+         		return false;
+     		}
     } 
     else  // the user submitted instances file
     {
@@ -39,7 +39,12 @@ function preprocessMOOResult(result, host)
    		}
 	}
 
-	var instancesXMLText = (new InstanceConverter(instances)).convertFromClaferMooOutputToXML();
+  var extraText = getExtraText(instances);
+  host.print("ClaferMooVisualizer> Backend output:\n");
+  host.print(extraText);
+  host.print("ClaferMooVisualizer> Backend output ends\n");
+
+	var instancesXMLText = (new InstanceConverter(instances)).convertFromClaferMooOutputToXML(null);
 
 	instancesXMLText = instancesXMLText.replaceAll('<?xml version="1.0"?>', '');
 
@@ -50,7 +55,7 @@ function preprocessMOOResult(result, host)
     }
 
     if (instancesXMLText.indexOf("<instance></instance>") >= 0)
-	{
+	  {
         host.findModule("mdInput").handleError(null, "malformed_instance", null);
         return false;
     }
@@ -77,9 +82,11 @@ function preprocessMOOResult(result, host)
 
     /* counting the number of lines */
     if (!host.storage.evolutionController.existingData){
-        var lines = data.unparsedInstances.match(/^.*([\n\r]+|$)/gm);
-        lines = data.unparsedInstances.split(lines[1]);
-        host.storage.evolutionController.existingInstancesCount = lines.length - 1;
+        var instanceProcessor = new InstanceProcessor(data.instancesXML);
+
+        //var lines = data.unparsedInstances.match(/^.*([\n\r]+|$)/gm);
+        //lines = data.unparsedInstances.split(lines[1]);
+        host.storage.evolutionController.existingInstancesCount = instanceProcessor.getInstanceCount();
     }
 
     host.storage.evolutionController.existingData = data;
@@ -134,4 +141,21 @@ function convertHtmlTags (input) {
     }
 
   return output;
+}
+
+
+function getExtraText(text)
+{ 
+  var instanceRegExp = /^=== Instance ([0-9]*) ===$/gm;  
+  var match = instanceRegExp.exec(text);
+
+  if (match == null) // meaning no instances
+  {
+    return text;    
+  }
+
+  var mPos1 = 0;
+  var mPos2 = match.index;
+
+  return text.substring(mPos1, mPos2);
 }

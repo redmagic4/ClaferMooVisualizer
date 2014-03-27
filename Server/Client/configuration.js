@@ -4,7 +4,7 @@ try
 }
 catch(e)
 {
-    alert("Could not find Google Visualization package. Please check the internet connection");
+    alert("Could not find Google Visualization package. Please check Internet connection");
 }
 
 function getConfiguration() 
@@ -14,14 +14,16 @@ function getConfiguration()
     	{
     		"layout": {
     			"width": (window.parent.innerWidth-20) * 0.38,
-    			"height": 180,
+    			"height": 210,
     			"posx": 0,
     			"posy": 0
     		},
 
     		"title": "Input Clafer Model and Options",
     		"optimization_backend": true, 
-            "input_default_cache": "checked",
+            "input_default_cache": false,
+            "input_default_optimizer_scope": true,            
+            "input_default_optimizer_maxint": true,            
             "input_default_flags": "",
             "file_extensions": [
                 {
@@ -30,9 +32,9 @@ function getConfiguration()
                     "button_example_caption": "Optimize",
                     "button_editor_caption": "Optimize",
 
-                    "button_file_tooltip": "Optimize tooltip",
-                    "button_example_tooltip": "Optimize tooltip",
-                    "button_editor_tooltip": "Optimize tooltip"
+                    "button_file_tooltip": "Optimize the selected file",
+                    "button_example_tooltip": "Optimize the selected example",
+                    "button_editor_tooltip": "Optimize the model specified in the editor"
                 },
                 {
                     "ext": ".data", 
@@ -40,9 +42,9 @@ function getConfiguration()
                     "button_example_caption": "Add Instances",
                     "button_editor_caption": "Add Instances",
 
-                    "button_file_tooltip": "Add Instances tooltip",
-                    "button_example_tooltip": "Add Instances tooltip",
-                    "button_editor_tooltip": "Add Instances tooltip"
+                    "button_file_tooltip": "Add instances to already computed Pareto front",
+                    "button_example_tooltip": "Add instances to already computed Pareto front",
+                    "button_editor_tooltip": "Add instances to already computed Pareto front"
                 }
             ],
 
@@ -56,11 +58,11 @@ function getConfiguration()
 			    else if (statusText == "timeout")
 			        caption = "<b>Request Timeout.</b><br>Please check whether the server is available.";
 			    else if (statusText == "malformed_output")
-			        caption = "<b>Malformed output received from ClaferMoo.</b><br>Please check whether you are using the correct version of ClaferMoo. Also, an unhandled exception is possible.  Please verify your input file: check syntax and integer ranges.";        
+			        caption = "<b>Malformed output received from the optimizer.</b><br>Please check whether you are using the correct version of the chosen optimizer. Also, an unhandled exception is possible.  Please verify your input file: check syntax and integer ranges.";        
 			    else if (statusText == "malformed_instance")
-			        caption = "<b>Malformed instance data received from ClaferMoo.</b><br>An unhandled exception may have occured during ClaferMoo execution. Please verify your input file: check syntax and integer ranges.";        
+			        caption = "<b>Malformed instance data received from the optimizer.</b><br>An unhandled exception may have occured during the optimizer execution. Please verify your input file: check syntax and integer ranges.";        
 			    else if (statusText == "empty_instances")
-			        caption = "<b>No instances returned.</b>Possible reasons:<br><ul><li>No optimal instances, all variants are non-optimal.</li><li>An unhandled exception occured during ClaferMoo execution. Please verify your input file: check syntax and integer ranges.</li></ul>.";        
+			        caption = "<b>No instances returned.</b> Possible reasons:<br><ul><li>No instances found at all: the model is not satisfiable within the given scopes and integer range</li><li>An unhandled exception occured in the chosen backend</li></ul>Please verify your input model, increase scopes and integer ranges.";        
 			    else if (statusText == "empty_argument")
 			        caption = "<b>Empty argument given to processToolResult.</b><br>Please report this error.";        
 			    else if (statusText == "empty_instance_file")
@@ -70,7 +72,7 @@ function getConfiguration()
 			    else if (statusText == "error" && response.responseText == "")
 			        caption = "<b>Request Error.</b><br>Please check whether the server is available.";        
 			    else
-			        caption = '<b>' + xhr + '</b><br>' + response.responseText.replace("\n", "<br>");
+			        caption = '<b>' + xhr + '</b><br>' + response.responseText.replaceAll("\\n", "<br>").replaceAll("\\t", "&nbsp;&nbsp;").replaceAll("\\r", "").replaceAll("\\\"", "\"");
 
 		        module.host.print("ClaferMooVisualizer> Error occured\n");
 
@@ -86,15 +88,17 @@ function getConfiguration()
     		},
 
     		"onPoll" : function(module, responseObject){
-//		        if (responseObject.args)
-//		        {
-//		            module.host.print("ClaferMooVisualizer> clafer " + responseObject.args + "\n");
-//		        }
+		        if (responseObject.args)
+		        {
+		            module.host.print("ClaferMooVisualizer> clafer " + responseObject.args + "\n");
+		        }
 
-//                if (responseObject.ig_args)
-//                {
-//                    module.host.print("ClaferMooVisualizer> " + responseObject.ig_args + "\n");
-//                }
+                if (responseObject.ig_args)
+                {
+                    module.host.print("ClaferMooVisualizer> " + responseObject.ig_args + "\n");
+                }
+
+                console.log(responseObject);
 
 		        if (responseObject.compiler_message)
 		        {
@@ -104,6 +108,8 @@ function getConfiguration()
 
     		},
     		"onCompleted" : function(module, responseObject){    					        
+                console.log(responseObject);
+
 		        if (responseObject.model != "")
 		        {
 		            module.editor.getSession().setValue(responseObject.model);
@@ -146,7 +152,7 @@ function getConfiguration()
 
                 module.host.storage.instanceFilter.filterContent();               
 
-		        module.host.print(responseObject.optimizer_message + "\n");
+		        module.host.print("ClaferMooVisualizer> " + responseObject.optimizer_message + "\n");
 		        return true;  
     		}    		
     	}
@@ -160,7 +166,7 @@ function getConfiguration()
                 "width": (window.parent.innerWidth-20) * 0.38,
                 "height": 70,
                 "posx": 0,
-                "posy": 215
+                "posy": 245
             },
 
             "onFilterByGoals": function(module)
@@ -174,9 +180,9 @@ function getConfiguration()
     	{
     		"layout": {
                 "width": (window.parent.innerWidth-20) * 0.38,
-                "height": window.parent.innerHeight - 40 - 50 - 355,
+                "height": 190,
                 "posx": 0,
-                "posy": 320
+                "posy": 350
     		},
 
 	    	"title": "Variant Comparer",
@@ -206,9 +212,9 @@ function getConfiguration()
 
     		"layout": {
                 "width": (window.parent.innerWidth-20) * 0.38,
-                "height": (160),
+                "height": window.parent.innerHeight - 40 - 50 - 580,
 			    "posx": 0,
-			    "posy": window.parent.innerHeight - 40 - 50
+			    "posy": 580
     		}
 
     	}});
@@ -302,7 +308,6 @@ function getConfiguration()
 	    },
     	"onLoaded": function(host)
 	    {
-            $.minimizeWindow("mdOutput");
 	    	$("#myform").submit();
 	    }	    
 	};
