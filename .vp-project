@@ -3,10 +3,11 @@ ClaferMooVisualizer
         or backends
 			ClaferMoo
 			ChocoSingle
-		 cache
+		cache
 		fileUpload
 			handleEmptyFile
 			fileProcessing
+			compileErrorHandling
 		cleanOldFiles
 		checkingDependencies
 		urlUploading
@@ -14,6 +15,7 @@ ClaferMooVisualizer
 		jquery
 		JSClass
 		hottracking
+		automaticViewSizing
         views			
 			featureAndQualityMatrix
 				expandCollapse
