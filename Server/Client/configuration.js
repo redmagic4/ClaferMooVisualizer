@@ -4,7 +4,7 @@ function getConfiguration()
     modules.push({"name": "Input", "configuration": 
     	{
     		"layout": {
-    			"width": (window.parent.innerWidth-40) * 0.38,
+    			"width": (window.parent.innerWidth-40) * 0.38, //&line [automaticViewSizing]
     			"height": 160,
     			"posx": 0,
     			"posy": 0
@@ -87,9 +87,9 @@ function getConfiguration()
     modules.push({"name": "CompiledFormats", "configuration": 
     	{
     		"layout": {
-    			"width": (window.parent.innerWidth-40) * (0.24),
-    			"height": window.parent.innerHeight - 60 - 245,
-    			"posx": (window.parent.innerWidth-40) * 0.38,
+    			"width": (window.parent.innerWidth-40) * (0.24),//&line [automaticViewSizing]
+    			"height": window.parent.innerHeight - 60 - 245,//&line [automaticViewSizing]
+    			"posx": (window.parent.innerWidth-40) * 0.38,//&line [automaticViewSizing]
     			"posy": 0
     		},
 
@@ -103,9 +103,9 @@ function getConfiguration()
 	    	"title": "Output",
 
     		"layout": {
-			    "width": (window.parent.innerWidth+65) * 0.38,
+			    "width": (window.parent.innerWidth+65) * 0.38,//&line [automaticViewSizing]
 			    "height": 70,
-			    "posx": (window.parent.innerWidth-40) * (1 - 0.38),
+			    "posx": (window.parent.innerWidth-40) * (1 - 0.38),//&line [automaticViewSizing]
 			    "posy": 0
     		}
 
