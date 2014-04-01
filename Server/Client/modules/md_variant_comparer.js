@@ -33,6 +33,7 @@ function VariantComparer(host, settings)
     this.host = host;
     
     this.dataTable = null;
+    this.host.loaded();
 }
 
 VariantComparer.method("onDataLoaded", function(data){
@@ -62,9 +63,9 @@ VariantComparer.method("getInitContent", function()
 });
 
 //rebuilds the table with the new selection data
-VariantComparer.method("onSelectionChanged", function(list){
+VariantComparer.method("onSelectionChanged", function(list, originalTable, permaHidden){
     //pulls data from the comparison table
-    var originalData = this.host.findModule("mdComparisonTable").dataTable;
+    var originalData = originalTable;
     var newlist = [];
     for (var i = 0; i < list.length; i++){
         newlist.push(parsePID(list[i]));
@@ -87,16 +88,16 @@ VariantComparer.method("onSelectionChanged", function(list){
     var commonData = data.getCommon(true); // ALL COMMON DATA
     var commonFeatures = commonData.toSetOfFeatures();
     
-    var differentFeatures = allFeatures.difference(commonFeatures);
-    var differentData = data.subsetByFeatures(differentFeatures.toArray()); // ALL DIFFERENT DATA
+    var differentFeatures = commonFeatures;
+    var differentData = data.subsetByFeatures(differentFeatures); // ALL DIFFERENT DATA
     differentData.title = "Differences";
 
   //&begin [setCompletion]
     // get the products that are missing to make up the complete set.
     var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), newlist);
-    var permaHidden = this.host.findModule("mdComparisonTable").filter.permaHidden;
 
     if (missingProducts){
+/* suspicious loop. Need to check whether the removal is right */
         for (var i = 0; i < missingProducts.length; i++){
             if (permaHidden.hasOwnProperty(getPID(missingProducts[i])));
                 missingProducts.splice(i, 1);
@@ -105,7 +106,8 @@ VariantComparer.method("onSelectionChanged", function(list){
 
     var clearButton = '<button id="clearVariantComparer">Clear</button> ';
     var label = clearButton;
-    
+    var context = this;
+
     if (commonFeatures.length > 0)
     {    
         if (missingProducts.length > 0)
@@ -124,7 +126,7 @@ VariantComparer.method("onSelectionChanged", function(list){
         }
         else
         {
-            label += '[Complete] - The set defines a complete class';
+            label += '[Complete]';
         }
     }
     else
@@ -140,23 +142,23 @@ VariantComparer.method("onSelectionChanged", function(list){
         $("#addMissing").click(function(){
             var i;
             for (i = 0; i<missingProducts.length; i++){
-                host.selector.onSelected(getPID(missingProducts[i].replace(/[\u2B22\u25CF\u25A0]/g, "")));
+                context.host.storage.selector.onSelected(getPID(missingProducts[i].replace(/[\u2B22\u25CF\u25A0]/g, "")));
             }
         }).css("cursor", "pointer");
     }
 
 // add function for clear button
     $("#clearVariantComparer").click(function(){
-        var selected = host.selector.selection;
+        var selected = context.host.storage.selector.selection;
         while (selected.length > 0){
-            host.selector.onDeselected(selected[selected.length-1]);
+            context.host.storage.selector.onDeselected(selected[selected.length-1]);
             selected.pop();
         };
     }).css("cursor", "pointer");
     
 // add function for save button
     $('#saveSelected').click(this.saveSelected.bind(this)).css("cursor", "pointer");
-    if (host.selector.selection.length > 0)
+    if (this.host.storage.selector.selection.length > 0)
         $("#saveSelected").removeAttr("disabled");
     else
         $("#saveSelected").attr("disabled", "disabled");
@@ -179,17 +181,17 @@ VariantComparer.method("onSelectionChanged", function(list){
         $("#VariantComparer #unique").html("No Data");
 
 // Adds all the shapes to the table headers
-    this.addShapes();
-    //&begin [removeVariant]
+//    this.addShapes();
+	//&begin [removeVariant]
 // add buttons to remove products
     var i;
     var differentProducts = $("#unique #r0").find(".td_instance");
     for (i=0; i<$(differentProducts).length; i++){
-        $(differentProducts[i]).prepend('<image id="rem' + $(differentProducts[i]).find(".svghead :last-child").text() + '" src="images/remove.png" alt="remove">')
+        $(differentProducts[i]).prepend('<image id="rem' + $(differentProducts[i]).find(".svghead :last-child").text() + '" src="commons/Client/images/remove.png" alt="remove">')
         var buttonId = "#rem" + $(differentProducts[i]).find(".svghead :last-child").text()
         $(buttonId).click(function(){
 //            console.log(getPID(String($(this).attr("id").substring(3))));
-            host.selector.onDeselected(getPID(String($(this).attr("id").substring(3))));
+            context.host.storage.selector.onDeselected(getPID(String($(this).attr("id").substring(3))));
         });
         $(buttonId).css("float", "left");
         $(buttonId).css("vertical-align", "middle");
@@ -198,18 +200,19 @@ VariantComparer.method("onSelectionChanged", function(list){
         
         $(buttonId).hover(
         function () {
-            $(this).attr("src", "images/removeMouseOver.png");
+            $(this).attr("src", "commons/Client/images/removeMouseOver.png");
         }, 
         function () {
-            $(this).attr("src", "images/remove.png");
+            $(this).attr("src", "commons/Client/images/remove.png");
         });      
     }
   //&end [removeVariant]
 //    alert(missingProducts);
-    this.addHover();
+//    this.addHover();
     
 });
 
+/*
 //adds Shapes to the table headers
 VariantComparer.method("addShapes", function(){
     Arow = $("#VariantComparer #unique #r0 .td_instance");
@@ -225,11 +228,12 @@ VariantComparer.method("addShapes", function(){
         $(correspondingCell).find("polygon").clone().prependTo($(Arow[i]).find(".svghead"));
     }
 });
+*/
 //&begin [saveInstances]
 //saves all selected instances and downloads them to client
 VariantComparer.method("saveSelected", function(){
-    var selection = this.host.selector.selection;
-    var instances = this.host.findModule('mdInput').previousData.Unparsed;
+    var selection = this.host.storage.selector.selection;
+    var instances = this.host.storage.previousData.Unparsed;
     var parser = new InstanceParser(instances);
     var data = "";
     for (var i=0; i < selection.length; i++){
@@ -240,6 +244,7 @@ VariantComparer.method("saveSelected", function(){
 });
 //&end [saveInstances]
 //&begin [hottracking]
+/*
 //adds hover effects and hottracking to table headers. Essentially the same as comparison table addHover function
 VariantComparer.method("addHover", function(){
     that = this;
@@ -251,27 +256,27 @@ VariantComparer.method("addHover", function(){
         var instance = $(this).find(".svghead :last-child").text();
 
         //get crosshairs 
-        var hairs = that.host.findModule("mdComparisonTable").getCrosshairs($("#" + getPID(instance) + "c").attr("cx"), $("#" + getPID(instance) + "c").attr("cy"));
+        var hairs = that.host.findModule("mdFeatureQualityMatrix").getCrosshairs($("#" + getPID(instance) + "c").attr("cx"), $("#" + getPID(instance) + "c").attr("cy"));
         $("#" + getPID(instance) + "c").before(hairs);
         $("#CHX").attr("class", instance + "HL");
         $("#CHY").attr("class", instance + "HL");
 
         var highlight = $("#" + getPID(instance) + "c").clone();
-        highlight = that.host.findModule("mdComparisonTable").highlight(highlight);
+        highlight = that.host.findModule("mdFeatureQualityMatrix").highlight(highlight);
         $(highlight).removeAttr("id");
         $(highlight).attr("class", instance + "HL");
         //add highlight element behind circle
         $("#" + getPID(instance) + "c").before(highlight);
 
         var highlight = $("#" + getPID(instance) + "r").clone();
-        highlight = that.host.findModule("mdComparisonTable").highlight(highlight);
+        highlight = that.host.findModule("mdFeatureQualityMatrix").highlight(highlight);
         $(highlight).removeAttr("id");
         $(highlight).attr("class", instance + "HL");
         //add highlight element behind circle
         $("#" + getPID(instance) + "r").before(highlight);
 
         var highlight = $("#" + getPID(instance) + "h").clone();
-        highlight = that.host.findModule("mdComparisonTable").highlight(highlight);
+        highlight = that.host.findModule("mdFeatureQualityMatrix").highlight(highlight);
         $(highlight).removeAttr("id");
         $(highlight).attr("class", instance + "HL");
         //add highlight element behind circle
@@ -299,4 +304,5 @@ VariantComparer.method("addHover", function(){
         clearTimeout(that.timeout);
     });
 });
+*/
 //&end [hottracking]
