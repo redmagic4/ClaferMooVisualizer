@@ -91,7 +91,7 @@ VariantComparer.method("onSelectionChanged", function(list){
     var differentData = data.subsetByFeatures(differentFeatures.toArray()); // ALL DIFFERENT DATA
     differentData.title = "Differences";
 
-    
+  //&begin [setCompletion]
     // get the products that are missing to make up the complete set.
     var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), newlist);
     var permaHidden = this.host.findModule("mdComparisonTable").filter.permaHidden;
@@ -134,7 +134,7 @@ VariantComparer.method("onSelectionChanged", function(list){
     label += saveButton;
 
     $("#VariantComparer #completeness").html(label);
-
+  //&end [setCompletion]
 // add function to addMissing button
     if($("#addMissing")){
         $("#addMissing").click(function(){
@@ -180,7 +180,7 @@ VariantComparer.method("onSelectionChanged", function(list){
 
 // Adds all the shapes to the table headers
     this.addShapes();
-
+    //&begin [removeVariant]
 // add buttons to remove products
     var i;
     var differentProducts = $("#unique #r0").find(".td_instance");
@@ -204,7 +204,7 @@ VariantComparer.method("onSelectionChanged", function(list){
             $(this).attr("src", "images/remove.png");
         });      
     }
-
+  //&end [removeVariant]
 //    alert(missingProducts);
     this.addHover();
     
@@ -225,7 +225,7 @@ VariantComparer.method("addShapes", function(){
         $(correspondingCell).find("polygon").clone().prependTo($(Arow[i]).find(".svghead"));
     }
 });
-
+//&begin [saveInstances]
 //saves all selected instances and downloads them to client
 VariantComparer.method("saveSelected", function(){
     var selection = this.host.selector.selection;
@@ -238,7 +238,8 @@ VariantComparer.method("saveSelected", function(){
     $("#saveData").val(data);
     $("#SaveForm").submit();
 });
-
+//&end [saveInstances]
+//&begin [hottracking]
 //adds hover effects and hottracking to table headers. Essentially the same as comparison table addHover function
 VariantComparer.method("addHover", function(){
     that = this;
@@ -298,3 +299,4 @@ VariantComparer.method("addHover", function(){
         clearTimeout(that.timeout);
     });
 });
+//&end [hottracking]
