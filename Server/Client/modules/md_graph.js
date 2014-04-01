@@ -269,11 +269,12 @@ Graph.method("makePointsReady", function(){
     var goals = this.Processor.getGoals();
     var originalPoints = this.host.findModule("mdInput").originalPoints
 // Get graph bubble html locations
+  //&begin [handleOptimalAndExistingInst]
     originalCirclePairs = [];
     for (var i=1; i<=originalPoints; i++){
         originalCirclePairs.push({circle: $("#" + getPID(i) + "c"), text_data: $("#" + getPID(i) + "t"), ident: i});
     }
-
+  //&end [handleOptimalAndExistingInst]
     var circle_pairs = [];
     for (var i=(originalPoints + 1); i<=$("#chart circle").length; i++){
         circle_pairs.push({circle: $("#" + getPID(i) + "c"), text_data: $("#" + getPID(i) + "t"), ident: i});
@@ -287,6 +288,7 @@ Graph.method("makePointsReady", function(){
         var fill = $(circlePair.circle).attr("fill");
         var id = getPID($(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "")) + "r"
         var NS="http://www.w3.org/2000/svg";
+      //&begin [handleOptimalAndExistingInst]
         var IdenticalId = this.instanceProcessor.getIdenticalID($(circlePair.circle).attr("id").replace(/[A-Za-z]/g, ""), goals, originalPoints) - 1;
         if (IdenticalId != -1){
             var shape = this.getSVGOctagon(xpos, ypos, r);
@@ -299,6 +301,7 @@ Graph.method("makePointsReady", function(){
             var shape = this.getSVGSquare(xpos, ypos, r)
             shape.setAttributeNS(null, "id", getPID($(circlePair.circle).attr("id").replace(/[A-Za-z]/g, "")) + "r");
         }
+      //&end [handleOptimalAndExistingInst]
         shape.setAttributeNS(null, "stroke","#000000");
         shape.setAttributeNS(null, "stroke-width","1");
         shape.setAttributeNS(null, "fill-opacity","0.8");
@@ -339,7 +342,7 @@ Graph.method("getSVGSquare", function(cx, cy, r){
     rect.setAttributeNS(null, "y",cy-r);
     return rect;
 });
-
+//&begin [multipleSelection]
 //formats object as selected
 Graph.method("selectObject", function(o)
 {
@@ -365,7 +368,7 @@ Graph.method("makePointsDeselected", function(points)
     var module = this;
     this.deselectObject($("#" + points + "t text")[1]);
 });
-
+//&end [multipleSelection]
 //assigns a goal to an axis
 Graph.method("assignToAxis", function(axis, arg, label)
 {
@@ -441,7 +444,7 @@ function setDim(el, w, h)
 //    $(el).css("width", w + "px");
 //    $(el).css("height", h + "px");
 }
-
+//&begin [graphResizing]
 Graph.method("resize", function() // not attached to the window anymore, so need to call the method
 {
 
@@ -487,7 +490,7 @@ Graph.method("resize", function() // not attached to the window anymore, so need
 
 	return true;
 });
-
+//&end [graphResizing]
 //This adds a visual filter that is used by the hottracking higlights
 Graph.method("addFilters", function(){
     var defs  = $("#defs");

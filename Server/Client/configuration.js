@@ -208,9 +208,9 @@ function getConfiguration()
 	    	"title": "Bubble Front Graph",
 
     		"layout": {
-			    "width": (window.parent.innerWidth+65) * 0.38,
+			    "width": (window.parent.innerWidth+65) * 0.38,//&line [automaticViewSizing]
 			    "height": 500,
-			    "posx": (window.parent.innerWidth-40) * (1 - 0.38),
+			    "posx": (window.parent.innerWidth-40) * (1 - 0.38),//&line [automaticViewSizing]
 			    "posy": 70
     		}
 

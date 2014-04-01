@@ -228,7 +228,7 @@ ParetoFrontVisualizer.prototype.draw = function(cprocessor, processor, args, lab
 
     google.visualization.events.addListener(this.chart, 'select', this.myClickHandler); 
     google.visualization.events.addListener(this.chart, 'onmouseover', function(data){
-
+    	//&begin [hottracking]
         $("#comparison #th0_" + (data.row+1)).css("background", "#ffffcc");
         var tomodify = $("#analysis #unique th").has("text:contains('" + (data.row+1) +"')");
         var text = String((data.row+1)) + String((data.row+1)) + "--";
@@ -237,7 +237,7 @@ ParetoFrontVisualizer.prototype.draw = function(cprocessor, processor, args, lab
             if (thistext == text)
                 $(this).css("background", "#ffffcc");
         });
-
+      //&end [hottracking]
         var originalPoints = this.host.findModule("mdInput").originalPoints;
         $("#chart circle").each(function(){
             if (data.row >= originalPoints){
@@ -249,7 +249,7 @@ ParetoFrontVisualizer.prototype.draw = function(cprocessor, processor, args, lab
         $($("#chart g:contains('" + getPID(data.row+1) + "') text")[0]).text("Variant " + (data.row+1));
     }); 
     google.visualization.events.addListener(this.chart, 'onmouseout', function(data){
-
+    	//&begin [hottracking]
         $("#comparison #th0_" + (data.row+1)).css("background", "");
         var tomodify = $("#analysis #unique th").has("text:contains('" + (data.row+1) +"')");
         var text = String((data.row+1)) + String((data.row+1)) + "--";
@@ -258,7 +258,7 @@ ParetoFrontVisualizer.prototype.draw = function(cprocessor, processor, args, lab
             if (thistext == text)
                 $(this).css("background", "");
         });
-
+      //&end [hottracking]
 
 
         $("#chart circle").each(function(){
