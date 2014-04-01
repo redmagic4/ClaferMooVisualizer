@@ -42,7 +42,7 @@ InstanceFilter.method("filterContent", function(){
     row = $("#mdComparisonTable #r" + i);
     row_length = row.find(".td_instance").length;
     while (row.length != 0){
-
+    	//&begin [filteringByFeatures]
         //filtering by features
         if (!row.find(".numeric").length){
             var filter = $("#mdComparisonTable #r" + i + "box").attr("Class"); //pull filter type from checkbox
@@ -56,7 +56,8 @@ InstanceFilter.method("filterContent", function(){
                 }
             }
         }
-
+      //&end [filteringByFeatures]
+        //&begin [filteringByGoals]
         //filtering by goals
         else {
             var filter;
@@ -77,7 +78,7 @@ InstanceFilter.method("filterContent", function(){
                     this.hideInstance(x);
             }
         }
-
+      //&end [filteringByGoals]
         //increment row
         i++;
         row = $("#mdComparisonTable #r" + i);
@@ -162,7 +163,7 @@ InstanceFilter.method("resetFilters", function(){
     //refresh filter
     this.filterContent();
 });
-
+//&begin [expandCollapse]
 InstanceFilter.method("hideRowByName", function (name){
     var rows = $(this.tableid + " tr");
     for (var i=0;i<rows.length;i++){
@@ -213,3 +214,4 @@ InstanceFilter.method("openFeature", function (feature){
     this.closedFeatures.splice(index, 1);
     this.filterContent();
 });
+//&end [expandCollapse]
