@@ -6,8 +6,8 @@ function getConfiguration()
     modules.push({"name": "Input", "configuration": 
     	{
     		"layout": {
-    			"width": (window.parent.innerWidth-40) * 0.38, //&line [automaticViewSizing]
-    			"height": 160,
+    			"width": (window.parent.innerWidth-20) * 0.38,//&line [automaticViewSizing]
+    			"height": 180,
     			"posx": 0,
     			"posy": 0
     		},
@@ -81,6 +81,11 @@ function getConfiguration()
 		            module.editor.getSession().setValue(responseObject.model);
 		        }
 
+                if (!responseObject.optimizer_message)
+                {
+                    return false;
+                }
+
 		        var data = preprocessMOOResult(responseObject, module.host);
 
 		        var goalsModule = module.host.findModule("mdGoals");
@@ -105,16 +110,35 @@ function getConfiguration()
     		}    		
     	}
 	});
-    modules.push({"name": "CompiledFormats", "configuration": 
+
+    modules.push({"name": "Goals", "configuration": 
+        {
+            "title": "Objectives and Quality Ranges",
+
+            "layout": {
+                "width": (window.parent.innerWidth-20) * 0.38,//&line [automaticViewSizing]
+                "height": 70,
+                "posx": 0,
+                "posy": 215
+            },
+
+            "onFilterByGoals": function(module)
+            {
+//    this.host.findModule("mdComparisonTable").filter.filterContent();             
+            }
+
+        }});
+
+    modules.push({"name": "VariantComparer", "configuration": 
     	{
     		"layout": {
-    			"width": (window.parent.innerWidth-40) * (0.24),//&line [automaticViewSizing]
-    			"height": window.parent.innerHeight - 60 - 245,//&line [automaticViewSizing]
-    			"posx": (window.parent.innerWidth-40) * 0.38,//&line [automaticViewSizing]
-    			"posy": 0
+                "width": (window.parent.innerWidth-20) * 0.38,//&line [automaticViewSizing]
+                "height": window.parent.innerHeight - 40 - 50 - 355,//&line [automaticViewSizing]
+                "posx": 0,
+                "posy": 320
     		},
 
-	    	"title": "Compiled Formats",
+	    	"title": "Variant Comparer",
 	    	"allow_downloading": true
 
     	}});
@@ -124,28 +148,10 @@ function getConfiguration()
 	    	"title": "Output",
 
     		"layout": {
-			    "width": (window.parent.innerWidth+65) * 0.38,//&line [automaticViewSizing]
-			    "height": 70,
-			    "posx": (window.parent.innerWidth-40) * (1 - 0.38),//&line [automaticViewSizing]
-			    "posy": 0
-    		}
-
-    	}});
-
-    modules.push({"name": "Goals", "configuration": 
-    	{
-	    	"title": "Objectives and Quality Ranges",
-
-    		"layout": {
-			    "width": 500,
-			    "height": 70,
+                "width": (window.parent.innerWidth-20) * 0.38,//&line [automaticViewSizing]
+                "height": (160),
 			    "posx": 0,
-			    "posy": 170
-    		},
-
-    		"onFilterByGoals": function(module)
-    		{
-//    this.host.findModule("mdComparisonTable").filter.filterContent();    			
+			    "posy": window.parent.innerHeight - 40 - 50//&line [automaticViewSizing]
     		}
 
     	}});
@@ -155,10 +161,10 @@ function getConfiguration()
 	    	"title": "Feature and Quality Matrix",
 
     		"layout": {
-			    "width": 500,
-			    "height": 300,
+			    "width": window.parent.innerWidth-20,//&line [automaticViewSizing]
+			    "height": 500,
 			    "posx": 0,
-			    "posy": 400
+			    "posy": window.parent.innerHeight - 40 - 50 + 40//&line [automaticViewSizing]
     		},
 
     		"buttonsForRemoval": true,
@@ -208,10 +214,10 @@ function getConfiguration()
 	    	"title": "Bubble Front Graph",
 
     		"layout": {
-			    "width": (window.parent.innerWidth+65) * 0.38,//&line [automaticViewSizing]
-			    "height": 500,
-			    "posx": (window.parent.innerWidth-40) * (1 - 0.38),//&line [automaticViewSizing]
-			    "posy": 70
+			    "width": (window.parent.innerWidth - 20) * 0.62,//&line [automaticViewSizing]
+			    "height": window.parent.innerHeight - 40 - 50,//&line [automaticViewSizing]
+			    "posx": (window.parent.innerWidth-20) * 0.38,//&line [automaticViewSizing]
+			    "posy": 0
     		}
 
     	}});
@@ -225,6 +231,7 @@ function getConfiguration()
 	    },
     	"onLoaded": function(host)
 	    {
+            $.minimizeWindow("mdOutput");
 	    	$("#myform").submit();
 	    }	    
 	};
