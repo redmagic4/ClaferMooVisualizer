@@ -33,7 +33,7 @@ Selector.method("onSelected", function(pid){
     var matrix = this.host.findModule("mdFeatureQualityMatrix");
     matrix.makePointsSelected(pid);
 
-    this.host.findModule("mdVariantComparer").onSelectionChanged(this.selection, matrix.dataTable, matrix.permahidden);
+    this.host.findModule("mdVariantComparer").onSelectionChanged(this.selection, matrix.dataTable, matrix.filter.permahidden);
     this.host.findModule("mdVariantComparer").addHovering();
 });
 
@@ -54,7 +54,7 @@ Selector.method("onDeselected", function(pid)
 
     $("." + pid.substring(1) + "HL").remove();
 
-    this.host.findModule("mdVariantComparer").onSelectionChanged(this.selection, matrix.dataTable, matrix.permahidden);
+    this.host.findModule("mdVariantComparer").onSelectionChanged(this.selection, matrix.dataTable, matrix.filter.permahidden);
     this.host.findModule("mdVariantComparer").addHovering();
 });
 
@@ -76,3 +76,11 @@ Selector.method("clearSelection", function()
 Selector.method("asString", function(){
     return this.selection.join(",");
 });
+
+Selector.method("ReselectGraphPoints", function(){
+    for (var i = 0; i < this.selection.length; i++)
+    {
+        this.host.findModule("mdGraph").makePointsSelected(this.selection[i]);
+    }
+});
+

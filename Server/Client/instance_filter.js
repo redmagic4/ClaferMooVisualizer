@@ -23,8 +23,8 @@ SOFTWARE.
 function InstanceFilter (host){
     this.host = host
     this.hidden = [];
-//    this.permaHidden = {};
-    this.originalPoints = host.storage.originalPoints;
+    this.permaHidden = {};
+//    this.originalPoints = host.storage.originalPoints;
     this.closedFeatures = [];
 }
 
@@ -42,13 +42,13 @@ InstanceFilter.method("filterContent", function(){
     	//&begin [filteringByFeatures]
         //filtering by features
         if (!row.find(".numeric").length){
-            var filter = $("#mdFeatureQualityMatrix #r" + i + "box").attr("Class"); //pull filter type from checkbox
+            var filter = $(row).attr("FilterStatus"); //pull filter type from the row attribute
             for (var x = 1; x <= row_length; x++){
-                if (filter == "maybe") //filter nothing for this row
+                if (filter == "none") //filter nothing for this row
                     break;
-                else if (filter == "wanted" && $("#mdFeatureQualityMatrix #td" + (i-1) + "_" + x).hasClass("no")) { //filter out column and bubble
+                else if (filter == "require" && $("#mdFeatureQualityMatrix #td" + (i-1) + "_" + x).hasClass("no")) { //filter out column and bubble
                     this.hideInstance(x);
-                } else if (filter == "unwanted" && $("#mdFeatureQualityMatrix #td" + (i-1) + "_" + x).hasClass("tick")) { //filter out column and bubble
+                } else if (filter == "exclude" && $("#mdFeatureQualityMatrix #td" + (i-1) + "_" + x).hasClass("tick")) { //filter out column and bubble
                     this.hideInstance(x);
                 }
             }
@@ -87,12 +87,12 @@ InstanceFilter.method("filterContent", function(){
     }
 
     //filtering by permaHidden
-/*
+
     for (var instance in this.permaHidden){
         if (this.permaHidden.hasOwnProperty(instance))
             this.hideInstance(instance.substring(1));
     }
-*/
+
     //fire the scroll handler to align table
     $('#mdFeatureQualityMatrix .window-content').scroll();
 
@@ -145,7 +145,7 @@ InstanceFilter.method("unFilter", function(){
     while(this.hidden.length){
         $(this.hidden.pop()).show();
     }
-    for (i = this.originalPoints; i<circle_pairs.length;i++){
-    	$(circle_pairs[i].circle).hide();
-    }
+//    for (i = this.originalPoints; i<circle_pairs.length;i++){
+//    	$(circle_pairs[i].circle).hide();
+//    }
 });
