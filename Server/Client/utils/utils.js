@@ -11,9 +11,9 @@ function preprocessMOOResult(result, host)
         host.storage.selector.clearSelection(); // reset the selection
 
     	if (!result.optimizer_instances)
-		{
-            host.findModule("mdInput").handleError(null, "malformed_output", null);
-       		return;
+		  {
+          host.findModule("mdInput").handleError(null, "malformed_output", null);
+       		return false;
    		}
     } 
     else  // the user submitted instances file
@@ -25,17 +25,17 @@ function preprocessMOOResult(result, host)
             if (!result.optimizer_instances)            
             {
                 host.findModule("mdInput").handleError(null, "empty_instance_file", null);
-                return;
+                return false;
             }
             
             var parser = new InstanceConverter(result.optimizer_instances);
-            instances += parser.convertFromClaferIGOutputToClaferMoo(host.storage.evolutionController.existingData.abstractXML);            
-            abstractXMLText = host.storage.evolutionController.existingData.abstractXML;
+            instances += parser.convertFromClaferIGOutputToClaferMoo(host.storage.evolutionController.existingData.claferXML);            
+            abstractXMLText = host.storage.evolutionController.existingData.claferXML;
         }
         else
-		{
+		    {
             host.findModule("mdInput").handleError(null, "optimize_first", null);
-       		return;
+       	    return false;
    		}
 	}
 
@@ -46,13 +46,13 @@ function preprocessMOOResult(result, host)
     if (instancesXMLText.length == 0 || instancesXMLText == "<instances></instances>")
     {
         host.findModule("mdInput").handleError(null, "empty_instances", null);
-        return;
+        return false;
     }
 
     if (instancesXMLText.indexOf("<instance></instance>") >= 0)
 	{
         host.findModule("mdInput").handleError(null, "malformed_instance", null);
-        return;
+        return false;
     }
 
 //	abstractXMLText = abstractXMLText.replaceAll("&quot;", "\"");
