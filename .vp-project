@@ -33,8 +33,7 @@ ClaferMooVisualizer
 			bubbleFrontGraph
 				ParetoFrontVisualizer
 					scatter
-				graphResizing
-				handleOptimalAndExistingInst
+				graphResizing				
 			useCases	
 			objectives
 			console
@@ -50,6 +49,8 @@ ClaferMooVisualizer
 				subsetByFeatures
 				makeAggregatedFeature
 				getMissingProductsInCommonData
+			evolutionController
+				handleOptimalAndExistingInst
 		instanceProcessor	
 		claferProcessor
 		claferIGInstanceParser

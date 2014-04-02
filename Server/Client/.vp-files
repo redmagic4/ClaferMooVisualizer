@@ -2,3 +2,5 @@ selection_controller.js
 multipleSelection
 instance_filter.js
 contentFilter
+evolution_controller.js
+evolutionController
