@@ -215,7 +215,7 @@ function runOptimization(process)
         res.end("Error: Could not find the required file format result.");
         return;
     }
-
+    //&begin [cache]
     if (process.cacheEnabled)
     {
         var cache_folder = __dirname + "/cache/";
@@ -244,7 +244,7 @@ function runOptimization(process)
             core.logSpecific("Cache not found.", process.windowKey);
         }
     }
-
+  //&end [cache]
     var fileAndPathReplacement = [
             {
                 "needle": "$dirname$", 
@@ -489,7 +489,7 @@ server.post('/poll', pollingMiddleware, function(req, res, next)
                         jsonObj.optimizer_instances = instances;
                         jsonObj.optimizer_claferXML = xml.toString();
                         jsonObj.optimizer_from_cache = process.loadedFromCache;
-
+                      //&begin [cache]
                         if (process.cacheEnabled && !process.loadedFromCache) // caching the results
                         {
                             fs.writeFile(process.cache_file_name, data_result, function(err)
@@ -504,6 +504,7 @@ server.post('/poll', pollingMiddleware, function(req, res, next)
                                 }
                             });
                         }
+                      //&end [cache]
                     }
                 }
                 else 
