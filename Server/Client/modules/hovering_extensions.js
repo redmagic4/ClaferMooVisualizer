@@ -84,10 +84,7 @@ FeatureQualityMatrix.method("addHovering", function()
     );
 
 });
-//&end [hottracking]
 
-
-//&begin [hottracking]
 //sets a shape to be rendered as a highlight
 FeatureQualityMatrix.method("highlight", function(obj){
     $(obj).attr("filter", "url(#blur)");
