@@ -83,12 +83,12 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
         $("#VariantComparer #unique").html("No Data");    
     }
 
-    var allFeatures = data.toSetOfFeatures();
+    var allFeatures = data.features;
 
     var commonData = data.getCommon(true); // ALL COMMON DATA
-    var commonFeatures = commonData.toSetOfFeatures();
+    var commonFeatures = commonData.features;
     
-    var differentFeatures = commonFeatures;
+    var differentFeatures = allFeatures.diff(commonFeatures);
     var differentData = data.subsetByFeatures(differentFeatures); // ALL DIFFERENT DATA
     differentData.title = "Differences";
 
@@ -96,11 +96,14 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
     // get the products that are missing to make up the complete set.
     var missingProducts = originalData.getMissingProductsInCommonData(data.getCommon(false), newlist);
 
-    if (missingProducts){
-/* suspicious loop. Need to check whether the removal is right */
-        for (var i = 0; i < missingProducts.length; i++){
-            if (permaHidden.hasOwnProperty(getPID(missingProducts[i])));
+    if (missingProducts)
+    {
+        while (i < missingProducts.length)
+        {
+            if (permaHidden.hasOwnProperty(getPID(missingProducts[i])))
                 missingProducts.splice(i, 1);
+            else
+                i++;
         }
     }
 
@@ -132,7 +135,7 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
     else
         label += "Please select more products for VariantComparer";
 
-    var saveButton = ' <input type="button" id="saveSelected" value="Save Selected" disabled="disabled">' + '<form id="SaveForm" action="/" method="post" enctype="multipart/form-data">' + '<input type="hidden" name="data" id="saveData" value="">' + '</form>';
+    var saveButton = ' <input type="button" id="saveSelected" value="Save Selected" disabled="disabled">' + '<form id="SaveForm" action="/saveinstances" method="post" enctype="multipart/form-data">' + '<input type="hidden" name="data" id="saveData" value="">' + '</form>';
     label += saveButton;
 
     $("#VariantComparer #completeness").html(label);
@@ -142,23 +145,24 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
         $("#addMissing").click(function(){
             var i;
             for (i = 0; i<missingProducts.length; i++){
-                context.host.storage.selector.onSelected(getPID(missingProducts[i].replace(/[\u2B22\u25CF\u25A0]/g, "")));
+                context.settings.onSelected(context, getPID(missingProducts[i].replace(/[\u2B22\u25CF\u25A0]/g, "")));
             }
         }).css("cursor", "pointer");
     }
 
 // add function for clear button
     $("#clearVariantComparer").click(function(){
-        var selected = context.host.storage.selector.selection;
+        var selected = context.settings.getSelection(context);
         while (selected.length > 0){
-            context.host.storage.selector.onDeselected(selected[selected.length-1]);
+            context.settings.onDeselected(context, selected[selected.length-1]);
             selected.pop();
         };
     }).css("cursor", "pointer");
     
 // add function for save button
     $('#saveSelected').click(this.saveSelected.bind(this)).css("cursor", "pointer");
-    if (this.host.storage.selector.selection.length > 0)
+
+    if (context.settings.getSelection(context).length > 0)
         $("#saveSelected").removeAttr("disabled");
     else
         $("#saveSelected").attr("disabled", "disabled");
@@ -180,9 +184,8 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
     else
         $("#VariantComparer #unique").html("No Data");
 
-// Adds all the shapes to the table headers
-//    this.addShapes();
-	//&begin [removeVariant]
+    this.settings.onHTMLChanged(this);
+//&begin [removeVariant]
 // add buttons to remove products
     var i;
     var differentProducts = $("#unique #r0").find(".td_instance");
@@ -191,7 +194,7 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
         var buttonId = "#rem" + $(differentProducts[i]).find(".svghead :last-child").text()
         $(buttonId).click(function(){
 //            console.log(getPID(String($(this).attr("id").substring(3))));
-            context.host.storage.selector.onDeselected(getPID(String($(this).attr("id").substring(3))));
+            context.settings.onDeselected(context, getPID(String($(this).attr("id").substring(3))));
         });
         $(buttonId).css("float", "left");
         $(buttonId).css("vertical-align", "middle");
@@ -205,35 +208,14 @@ VariantComparer.method("onSelectionChanged", function(list, originalTable, perma
         function () {
             $(this).attr("src", "commons/Client/images/remove.png");
         });      
-    }
-  //&end [removeVariant]
-//    alert(missingProducts);
-//    this.addHover();
-    
+    }    
+//&end [removeVariant]
 });
-
-/*
-//adds Shapes to the table headers
-VariantComparer.method("addShapes", function(){
-    Arow = $("#VariantComparer #unique #r0 .td_instance");
-    for (var i=0; i<Arow.length; i++){
-        if ($(Arow[i]).find(".svghead").length == 0)
-            var text = $(Arow[i]).text()
-        else 
-            var text  = $($(Arow[i]).find(".svghead text")[0]).text(); 
-        var correspondingCell = $("#comparison #th0_" + text);
-        $(Arow[i]).html('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="svghead" height="22px" width="22px"><text text-anchor="middle" x="11px" y="16px" stroke="#ffffff" stroke-width="3px">' + text + '</text><text text-anchor="middle" x="11px" y="16px">' + text + '</text></svg>')
-        $(correspondingCell).find("circle").clone().prependTo($(Arow[i]).find(".svghead"));
-        $(correspondingCell).find("rect").clone().prependTo($(Arow[i]).find(".svghead"));
-        $(correspondingCell).find("polygon").clone().prependTo($(Arow[i]).find(".svghead"));
-    }
-});
-*/
 //&begin [saveInstances]
 //saves all selected instances and downloads them to client
 VariantComparer.method("saveSelected", function(){
-    var selection = this.host.storage.selector.selection;
-    var instances = this.host.storage.previousData.Unparsed;
+    var selection = this.settings.getSelection(this);
+    var instances = this.settings.getPreviousData(this).Unparsed;
     var parser = new InstanceParser(instances);
     var data = "";
     for (var i=0; i < selection.length; i++){
@@ -243,66 +225,3 @@ VariantComparer.method("saveSelected", function(){
     $("#SaveForm").submit();
 });
 //&end [saveInstances]
-//&begin [hottracking]
-/*
-//adds hover effects and hottracking to table headers. Essentially the same as comparison table addHover function
-VariantComparer.method("addHover", function(){
-    that = this;
-    this.interval = null;
-    this.timeout = null;
-    $("#unique #r0 .td_instance").hover( 
-        function () {
-        $(this).css("background", "#ffffcc");
-        var instance = $(this).find(".svghead :last-child").text();
-
-        //get crosshairs 
-        var hairs = that.host.findModule("mdFeatureQualityMatrix").getCrosshairs($("#" + getPID(instance) + "c").attr("cx"), $("#" + getPID(instance) + "c").attr("cy"));
-        $("#" + getPID(instance) + "c").before(hairs);
-        $("#CHX").attr("class", instance + "HL");
-        $("#CHY").attr("class", instance + "HL");
-
-        var highlight = $("#" + getPID(instance) + "c").clone();
-        highlight = that.host.findModule("mdFeatureQualityMatrix").highlight(highlight);
-        $(highlight).removeAttr("id");
-        $(highlight).attr("class", instance + "HL");
-        //add highlight element behind circle
-        $("#" + getPID(instance) + "c").before(highlight);
-
-        var highlight = $("#" + getPID(instance) + "r").clone();
-        highlight = that.host.findModule("mdFeatureQualityMatrix").highlight(highlight);
-        $(highlight).removeAttr("id");
-        $(highlight).attr("class", instance + "HL");
-        //add highlight element behind circle
-        $("#" + getPID(instance) + "r").before(highlight);
-
-        var highlight = $("#" + getPID(instance) + "h").clone();
-        highlight = that.host.findModule("mdFeatureQualityMatrix").highlight(highlight);
-        $(highlight).removeAttr("id");
-        $(highlight).attr("class", instance + "HL");
-        //add highlight element behind circle
-        $("#" + getPID(instance) + "h").before(highlight);
-
-        var myBool = true;
-        that.timeout = setTimeout(function(){
-            that.interval = setInterval(function(){
-                if (myBool){
-                    $("." + instance + "HL").hide(500);
-                    myBool = false;
-                } else {
-                    $("." + instance + "HL").show(500);
-                    myBool = true;
-                }
-            }, 500);
-        }, 1500);
-    }, 
-
-    function () {
-        $(this).css("background", "");
-        var instance = $(this).find(".svghead :last-child").text();
-        $("." + instance + "HL").remove();
-        clearInterval(that.interval);
-        clearTimeout(that.timeout);
-    });
-});
-*/
-//&end [hottracking]

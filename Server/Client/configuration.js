@@ -102,19 +102,22 @@ function getConfiguration()
 
 				goalsModule.onDataLoaded(data);
 				data.goals = goalsModule.goals;
+                graphModule.onDataLoaded(data);
 				matrixModule.onDataLoaded(data);
-				graphModule.onDataLoaded(data);
                 comparerModule.onDataLoaded(data);
 
 				$.updateWindowContent(goalsModule.id, goalsModule.getContent());
+                $.updateWindowContent(graphModule.id, graphModule.getContent());
 				$.updateWindowContent(matrixModule.id, matrixModule.getContent());
-				$.updateWindowContent(graphModule.id, graphModule.getContent());
                 $.updateWindowContent(comparerModule.id, comparerModule.getContent());
 
 				goalsModule.onRendered();
+                graphModule.onRendered();
+                matrixModule.addShapes();
 				matrixModule.onRendered();
-				graphModule.onRendered();
                 comparerModule.onRendered();
+
+                matrixModule.addHovering();
 
 		        module.host.print("Optimizer> " + responseObject.optimizer_message + "\n");
 		        return true;  
@@ -152,8 +155,28 @@ function getConfiguration()
 	    	"title": "Variant Comparer",
 	    	"allow_downloading": true,
 
-// this.host.findModule("mdFeatureQualityMatrix").dataTable            
-// permahidden
+            "onSelected": function(module, pid)
+            {
+//                alert("Selected");
+                module.host.storage.selector.onSelected(pid);               
+            },
+            "onDeselected": function(module, pid)
+            {
+//                alert("Deselected");
+                module.host.storage.selector.onDeselected(pid);             
+            },
+            "getSelection" : function(module)
+            {
+                return module.host.storage.selector.selection;              
+            },
+
+            "getPreviousData" : function (module){
+                return host.storage.previousData;    
+            },
+
+            "onHTMLChanged": function (module){
+                module.addShapes();                
+            }
 
     	}});
 
@@ -181,7 +204,7 @@ function getConfiguration()
 			    "posy": window.parent.innerHeight - 40 - 50 + 40//&line [automaticViewSizing]
     		},
 
-    		"buttonsForRemoval": true,
+    		"buttonsForRemoval": false,
 
     		"onFilterByFeatures": function(module)
     		{
@@ -189,12 +212,12 @@ function getConfiguration()
     		},
     		"onSelected": function(module, pid)
     		{
-    			alert("Selected");
+//    			alert("Selected");
 				module.host.storage.selector.onSelected(pid);    			
     		},
     		"onDeselected": function(module, pid)
     		{
-    			alert("Deselected");
+//    			alert("Deselected");
 				module.host.storage.selector.onDeselected(pid);    			
     		},
     		"getSelection" : function(module)
@@ -203,7 +226,7 @@ function getConfiguration()
     		},    		
     		"onReset": function(module)
     		{
-    			alert("Reset");
+//    			alert("Reset");
     		},
     		"onFeatureExpanded": function(module, feature)
     		{
@@ -243,7 +266,10 @@ function getConfiguration()
             "onIdenticalFound": function(module, IdenticalId){
                 host.findModule("mdFeatureQualityMatrix").filter.permaHidden[getPID((IdenticalId+1))] = true;                   
             },
-
+            "getSelection" : function(module)
+            {
+                return module.host.storage.selector.selection;              
+            },          
             "onBubbleClick": function(module, pid){
                 if (module.host.storage.selector.isSelected(pid))
                 {
@@ -254,7 +280,6 @@ function getConfiguration()
                     module.host.storage.selector.onSelected(pid);
                 }                
             }
-
     	}});
 
     var settings = {
