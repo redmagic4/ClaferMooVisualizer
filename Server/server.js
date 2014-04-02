@@ -137,7 +137,7 @@ server.get('/saveformat', fileMiddleware, function(req, res) {
                                  "Content-Disposition": "attachment; filename=compiled" + suffix});
     res.end(result);
 });
-
+//&begin [saveInstances]
 //------------------- save instances request --------------------------
 server.post('/saveinstances', commandMiddleware, function(req, res, next) {
     var process = core.getProcess(req.body.windowKey);
@@ -153,7 +153,7 @@ server.post('/saveinstances', commandMiddleware, function(req, res, next) {
         res.send(404, "Sorry can't find your session. Please re-compile your file to start a new one");        
     }
 });
-
+//&end [saveInstances]
 
 
 /*
