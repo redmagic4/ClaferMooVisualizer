@@ -32,6 +32,7 @@ var formatConfig = require('./Formats/formats.json');
 
 var lib = require("./commons/common_lib");
 var core = require("./commons/core_lib");
+var crypto = require('crypto'); // for getting hashes
 
 /*  Rate Limiter */
 var rate            = require('express-rate/lib/rate'),
@@ -183,13 +184,66 @@ function runOptimization(process)
     if (!format)
     {
         core.logSpecific("Error: Required format was not found", key);
-        resultMessage = "Error: Could not find the required file format.";
-        isError = true;
+        res.writeHead(400, { "Content-Type": "text/html"});
+        res.end("Error: Could not find the required file format.");
         return;
     }
 
     core.logSpecific(backend.id + " ==> " + format.id, key);
     process.mode_completed = false;
+
+
+    var found = false;
+    var file_contents = null;
+    var suffix = "";
+
+    for (var j = 0; j < process.compiled_formats.length; j++)
+    {
+        if (process.compiled_formats[j].id == format.id)
+        {
+            found = true;
+            file_contents = process.compiled_formats[j].result;
+            suffix = process.compiled_formats[j].fileSuffix;
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        core.logSpecific("Error: Required format result was not found", key);
+        res.writeHead(400, { "Content-Type": "text/html"});
+        res.end("Error: Could not find the required file format result.");
+        return;
+    }
+
+    if (process.cacheEnabled)
+    {
+        var cache_folder = __dirname + "/cache/";
+        var hash = crypto.createHash('md5').update(file_contents).digest("hex");
+        var cache_file_name = cache_folder + hash + "_" + process.optimization_backend + ".json";
+        process.cache_file_name = cache_file_name;
+        core.logSpecific("Cache file name: " + process.cache_file_name, process.windowKey);                
+
+
+        core.logSpecific("Checking Cache...", process.windowKey);
+        
+        if (fs.existsSync(process.cache_file_name)) // cache hit
+        {
+            core.logSpecific("Cache FOUND, returning.", process.windowKey);
+
+            process.freshData = fs.readFileSync(cache_file_name).toString(); 
+            process.mode_completed = true;
+            process.loadedFromCache = true;
+            process.code = 0;
+            process.completed = true;
+            process.tool = null;
+            return;
+        }
+        else
+        {
+            core.logSpecific("Cache not found.", process.windowKey);
+        }
+    }
 
     var fileAndPathReplacement = [
             {
@@ -221,7 +275,6 @@ function runOptimization(process)
 
     process.tool.stdout.on("data", function (data)
     {
-        console.log(data.toString());
         var process = core.getProcess(key);
         if (process != null)
         {
@@ -234,7 +287,6 @@ function runOptimization(process)
 
     process.tool.stderr.on("data", function (data)
     {
-        console.log(data.toString());
         var process = core.getProcess(key);
         if (process != null)
         {
@@ -246,8 +298,6 @@ function runOptimization(process)
 
     process.tool.on("close", function (code)
     {
-        console.log("ERROR: " + code);
-
         var process = core.getProcess(key);
         if (process != null)
         {
@@ -256,7 +306,6 @@ function runOptimization(process)
             process.tool = null;
         }                
     });
-
 }
  // &begin fileUpload
 server.post('/upload', commandMiddleware, function(req, res, next) 
@@ -265,7 +314,6 @@ server.post('/upload', commandMiddleware, function(req, res, next)
 
     function fileReady(uploadedFilePath, dlDir, loadedViaURL)
     {        
-
         var loadExampleInEditor = req.body.loadExampleInEditor;
         if (loadedViaURL)
         {
@@ -299,9 +347,9 @@ server.post('/upload', commandMiddleware, function(req, res, next)
                 folder: dlDir, 
                 clafer_compiler: null,
                 file: uploadedFilePath, 
-                mode : "compiler", 
+                mode : "compiler",
+                cacheEnabled: req.body.useCache, // save the caching setting here 
                 freshError: ""});    
-
 
             var ss = "--ss=none";
 
@@ -327,6 +375,8 @@ server.post('/upload', commandMiddleware, function(req, res, next)
                 process.model = "";                                   
 
             process.optimization_backend = req.body.optimizationBackend;
+            process.completed = false;
+            process.loadedFromCache = false;
 
             lib.runClaferCompiler(req.body.windowKey, specifiedArgs, genericArgs, function()
             {
@@ -438,6 +488,22 @@ server.post('/poll', pollingMiddleware, function(req, res, next)
                         jsonObj.optimizer_message = message;
                         jsonObj.optimizer_instances = instances;
                         jsonObj.optimizer_claferXML = xml.toString();
+                        jsonObj.optimizer_from_cache = process.loadedFromCache;
+
+                        if (process.cacheEnabled && !process.loadedFromCache) // caching the results
+                        {
+                            fs.writeFile(process.cache_file_name, data_result, function(err)
+                            {
+                                if (err)
+                                {
+                                    core.logSpecific("Could not write cache: " + process.cache_file_name, process.windowKey);                    
+                                }
+                                else
+                                {
+                                    core.logSpecific("The cache file successfully saved: " + process.cache_file_name, process.windowKey);
+                                }
+                            });
+                        }
                     }
                 }
                 else 
