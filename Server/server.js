@@ -616,6 +616,19 @@ server.post('/poll', pollingMiddleware, function(req, res, next)
     
 });
 //&end [polling]
+server.get('/initdata', commandMiddleware, function(req, res)
+{
+    core.logSpecific("Initialization data request", req.body.windowKey);
+
+    res.writeHead(200, { "Content-Type": "application/json"});
+
+    var jsonObj = new Object();
+    jsonObj.versions = core.getDependencyVersionsText();
+    jsonObj.version = core.getVersion();
+    jsonObj.title = core.getTitle();
+    res.end(JSON.stringify(jsonObj));
+});
+
 /*
  * Catch all the rest. Error reporting for unknown routes
  */
@@ -630,11 +643,24 @@ server.use(function(req, res, next)
 //================================================================
 
 core.logNormal('===============================');
-core.logNormal('| Clafer Moo Visualizer v0.3.5.??-??-???? |');
+core.logNormal('| ' + core.getTitle() + ' ' + core.getVersion() + ' |');
 core.logNormal('===============================');
 
 core.addDependency("clafer", ["-V"], "Clafer Compiler");
 core.addDependency("java", ["-version"], "Java");
+
+var dirReplacementMap = [
+        {
+            "needle": "$dirname$", 
+            "replacement": __dirname + "/Backends"
+        }
+    ];
+
+for (var i = 0; i < backendConfig.backends.length; i++)
+{
+    core.addDependency(backendConfig.backends[i].tool, core.replaceTemplateList(backendConfig.backends[i].tool_version_args, dirReplacementMap), backendConfig.backends[i].label);
+}
+
 core.runWithDependencyCheck(function(){
     server.listen(port);
     core.logNormal('======================================');
