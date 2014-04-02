@@ -1,5 +1,5 @@
 
-
+//&begin [hottracking]
 //  Adds hot-tracking and highlighting for table and graph
 FeatureQualityMatrix.method("addHovering", function()
 {   
@@ -84,7 +84,7 @@ FeatureQualityMatrix.method("addHovering", function()
     );
 
 });
-
+//&end [hottracking]
 
 //adds proper shapes and svg fields to the headers in the comparison table
 FeatureQualityMatrix.method("addShapes", function(){
@@ -144,7 +144,7 @@ FeatureQualityMatrix.method("addShapes", function(){
 });
 
 
-
+//&begin [hottracking]
 //sets a shape to be rendered as a highlight
 FeatureQualityMatrix.method("highlight", function(obj){
     $(obj).attr("filter", "url(#blur)");
@@ -152,7 +152,7 @@ FeatureQualityMatrix.method("highlight", function(obj){
     $(obj).attr("stroke", "yellow");
     return obj;
 });
-
+//&end [hottracking]
 
 
 //return an svg octagon of 2r diameter centered at (x,y)
@@ -231,7 +231,7 @@ VariantComparer.method("addShapes", function(){
     }
 });
 
-
+//&begin [hottracking]
 //adds hover effects and hottracking to table headers. Essentially the same as comparison table addHover function
 VariantComparer.method("addHovering", function(){
     that = this;
@@ -291,7 +291,7 @@ VariantComparer.method("addHovering", function(){
         clearTimeout(that.timeout);
     });
 });
-
+//&end [hottracking]
 
 //adds Shapes to the table headers
 VariantComparer.method("addShapes", function(){
