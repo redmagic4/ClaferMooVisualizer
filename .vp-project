@@ -62,7 +62,6 @@ ClaferMooVisualizer
 			pingTimeout
 			executionTimeout
         errorHandling
-        cancellation
-	instanceParser
+        cancellation	
 	selectionOfExamples
 	multipart
