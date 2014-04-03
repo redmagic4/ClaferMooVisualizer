@@ -48,8 +48,8 @@ function getConfiguration()
 
     		"onError": function(module, statusText, response, xhr){
 			    var caption = "";
-                console.log(statusText);
-                console.log(response);
+//                console.log(statusText);
+//                console.log(response);
 
 			    if (statusText == "compile_error")
 			        caption = "<b>Compile Error.</b><br>Please check whether Clafer Compiler is available, and the model is correct.";
@@ -90,10 +90,11 @@ function getConfiguration()
 		        {
 		            module.host.print("ClaferMooVisualizer> clafer " + responseObject.args + "\n");
 		        }
-//		        if (responseObject.compiled_formats)
-//		        {
-//		            module.host.findModule("mdCompiledFormats").setResult(responseObject.compiled_formats);
-//		        }
+
+                if (responseObject.ig_args)
+                {
+                    module.host.print("ClaferMooVisualizer> " + responseObject.ig_args + "\n");
+                }
 
 		        if (responseObject.compiler_message)
 		        {
@@ -145,7 +146,7 @@ function getConfiguration()
 
                 module.host.storage.instanceFilter.filterContent();               
 
-		        module.host.print("Optimizer> " + responseObject.optimizer_message + "\n");
+		        module.host.print(responseObject.optimizer_message + "\n");
 		        return true;  
     		}    		
     	}
